@@ -1,0 +1,21 @@
+OTRS watcher
+============
+
+What
+----
+
+This is a firefox add-on that displays the number of tickets in your OTRS' queue
+along with the number of your locked, watched and responsible tickets.
+
+
+Why
+---
+
+I was annoyed to regulary switch to the tab containing the OTRS site.
+Keeping an eye on the numbers in the statusbar seemed more convenient.
+
+How
+---
+
+This plugin simply uses the services that are provided by the iPhoneBundle.
+So you need that installed on your OTRS site.
