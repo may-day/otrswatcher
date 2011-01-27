@@ -1,0 +1,8 @@
+content otrswatcher chrome/content/
+
+locale otrswatcher de-DE chrome/locale/de-DE/
+
+# Firefox
+overlay	chrome://browser/content/browser.xul chrome://otrswatcher/content/otrswatcher.xul
+
+skin otrswatcher classic/1.0 chrome/skin/

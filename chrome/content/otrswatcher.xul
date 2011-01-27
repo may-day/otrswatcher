@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://otrswatcher/skin/otrswatcher.css" type="text/css"?> 
+
+<!DOCTYPE overlay SYSTEM "chrome://otrswatcher/locale/otrswatcher.dtd">
+
+<overlay id="otrswatcher-overlay"
+  xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript"
+  src="chrome://otrswatcher/content/otrswatcher-options.js"/>
+
+    <script type="application/x-javascript">
+      window.addEventListener("load", function(){initializeOverlay(); onloadStatusbar();}, false);
+      window.addEventListener("unload", uninstallTimer, false);
+    </script>
+
+<stringbundleset id="stringbundleset">
+	<stringbundle id="string-bundle" src="chrome://otrswatcher/locale/otrswatcher.properties"/>
+</stringbundleset>
+
+<statusbar id="status-bar">
+  <popupset>
+    <popup id="otrsmenu" position="after_start">
+      <menuitem label="&ow.menu.options.label;" 
+		oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); win.addEventListener('unload', onloadStatusbar, false); win.focus();"/>
+      <menuseparator/>
+      <menuitem label="&ow.menu.otrs.label;" oncommand="openOTRS();"/>
+    </popup>
+  </popupset>
+
+	<statusbarpanel
+		label="&ow.panel.loading;"
+		context="otrsmenu"
+		>
+	  <hbox id="otrswatcherbox">
+	    <label>otrs: </label>
+<tooltip id="otrswatcher.queue.tooltip" orient="vertical" style="background-color: #33DD00;" label="queue" />
+<tooltip id="otrswatcher.watched.tooltip" orient="vertical" style="background-color: #33DD00;" label="watched" />
+<tooltip id="otrswatcher.responsible.tooltip" orient="vertical" style="background-color: #33DD00;" label="responsible" />
+<tooltip id="otrswatcher.locked.tooltip" orient="vertical" style="background-color: #33DD00;" label="locked" />
+
+	    <hbox id="otrswatchercolumns">
+	      <label id="otrswatcher.queue" value="?" tooltip="otrswatcher.queue.tooltip"/>
+	      <label id="otrswatcher.watched" value="?" tooltip="otrswatcher.watched.tooltip"/>
+	      <label id="otrswatcher.responsible" value="?" tooltip="otrswatcher.responsible.tooltip"/>
+	      <label id="otrswatcher.locked" value="?" tooltip="otrswatcher.locked.tooltip"/>
+	    </hbox>
+	  </hbox>
+	</statusbarpanel>
+</statusbar>
+</overlay>

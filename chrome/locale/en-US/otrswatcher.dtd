@@ -1,0 +1,17 @@
+<!ENTITY ow.title "otrswatcher">
+<!ENTITY ow.prefs.title "otrswatcher settings">
+<!ENTITY ow.prefs.otrsaccess "OTRS Account">
+<!ENTITY ow.prefs.display "Display">
+<!ENTITY ow.prefs.whatandhow "What&amp;How">
+<!ENTITY ow.prefs.about "About">
+<!ENTITY ow.menu.options.label "otrswatcher settings">
+<!ENTITY ow.menu.otrs.label "open OTRS">
+<!ENTITY ow.panel.loading "Loading...">
+<!ENTITY ow.about.version "Version">
+<!ENTITY ow.about.description "Display amount of queued/watched/resp./locked tickets in OTRS">
+<!ENTITY ow.about.created "Author">
+<!ENTITY ow.about.author "Norman Krämer">
+<!ENTITY ow.about.homepage "Homepage">
+<!ENTITY ow.prefs.onaddons "OTRSAddon">
+<!ENTITY ow.prefs.projecthome "Projectpages">
+<!ENTITY ow.about.license "License">

@@ -1,0 +1,7 @@
+@namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
+
+#otrswatcherbox {
+    padding:0;
+  margin:0;
+  border: 1px solid ThreeDShadow;
+}

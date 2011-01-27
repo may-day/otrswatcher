@@ -1,0 +1,143 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<!--
+<?xml-stylesheet href="chrome://otrswatcher/skin/otrswatcher.css" type="text/css"?> 
+-->
+
+<!DOCTYPE dialog SYSTEM "chrome://otrswatcher/locale/otrswatcher.dtd">
+
+<dialog id="otrswatcher-options-dialog"
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	title="&ow.prefs.title;"
+	
+	buttons="accept,cancel"
+	ondialogaccept="savePref();">
+
+  <script type="application/x-javascript" src="chrome://otrswatcher/content/otrswatcher-options.js"/>
+
+    <script type="application/x-javascript">
+      window.addEventListener("load", onloadSettings, false);
+    </script>
+
+  <stringbundleset id="stringbundleset">
+    <stringbundle id="ow-strings" src="chrome://otrswatcher/locale/otrswatcher.properties"/>
+  </stringbundleset>
+
+  <tabbox id="settings_tb">
+    <tabs>
+      <tab label="&ow.prefs.otrsaccess;"/> 
+      <tab label="&ow.prefs.whatandhow;"/> 
+      <tab label="&ow.prefs.about;"/>
+    </tabs>
+
+    <tabpanels flex="1">
+      <tabpanel>
+	<vbox>
+	<hbox>
+	<grid>
+	  <columns>
+	    <column flex="1"/>
+	    <column flex="1"/>
+	  </columns>
+	  <rows>
+	    <row>
+	      <label control="otrsjsonurl" value="OTRS json-URL"/>
+	      <textbox id="otrsjsonurl" value="https://support.your-company.com/otrs/json.pl" size="45" onchange="clearTestResult();"/>
+	    </row>
+	    <row>
+	      <label control="username" value="username"/>
+	      <textbox id="username" value=""  onchange="clearTestResult();"/>
+	    </row>
+	    <row>
+	      <label control="password" value="password"/>
+	      <textbox id="password" value=""  type="password"  onchange="clearTestResult();"/>
+	    </row>
+	    <row>
+	      <label control="savepass" value="User &amp; Passwort speichern?"/><checkbox id="savepass"/>
+	    </row>
+	 </rows>
+	</grid>
+      <vbox>
+      <button label="test login" oncommand="testLogin();"/>
+      </vbox>
+      </hbox>
+      <label id="accesstest" value="" crop="end"/>
+      </vbox>
+      </tabpanel>
+
+      <tabpanel>
+
+	<groupbox>
+	  <caption label="Hintergundfarbe"/>
+	  <grid>
+	    
+	    <columns>
+	      <column flex="1"/>
+	      <column flex="1"/>
+	    </columns>
+	    <rows>
+	      <row>
+		<label>Queue</label>
+		<hbox><colorpicker type="button" onchange="changeColor(this);" id="queue"/></hbox>
+	      </row>
+	      <row>
+		<label>Beobachtete</label>
+		<hbox><colorpicker type="button" onchange="changeColor(this);" id="watched"/></hbox>
+	      </row>
+	      <row>
+		<label>Verantwortlich</label>
+		<hbox><colorpicker type="button" onchange="changeColor(this);" id="responsible"/></hbox>
+	      </row>
+	      <row>
+		<label>Gesperrte</label>
+		<hbox><colorpicker type="button" onchange="changeColor(this);" id="locked" /></hbox>
+	      </row>
+	    </rows>
+	  </grid>
+
+	  <separator/>
+	  <hbox>
+	    <label>Bsp.:</label>
+	    <hbox id="columns">
+	      <label id="example.queue" value="8"/>
+	      <label id="example.watched" value="15"/>
+	      <label id="example.responsible" value="47"/>
+	      <label id="example.locked" value="11"/>
+	    </hbox>
+	  </hbox>
+	</groupbox>
+	<vbox>
+	  <hbox>
+	    <label control="checkintervall" value="Checkintervall in Minuten:"/>
+	    <textbox type="number" size="3" id="checkintervall" value="5" min="5" />
+	  </hbox>
+	  <hbox>
+	    <label control="queuefilter" value="ignoriere Queues:"/>
+	    <textbox size="30" id="queuefilter" value="" />
+	    <button label="meine Queues abfragen" oncommand="dispMyQueues();"/>
+	  </hbox>
+	  <hbox>
+	    <textbox size="60" placeholder="meine Queues" id="myqueues" value="" readonly="true" />
+	  </hbox>
+	</vbox>
+
+
+      </tabpanel>
+
+      <tabpanel>
+
+	<vbox>
+	  <description>&ow.about.description;</description>
+	  <description>&ow.about.version; <label value="0.1"/></description>
+  	  <description>&ow.about.author;</description>
+    	  <description>Mozilla Public License 1.1</description>
+	</vbox>
+	  
+
+      </tabpanel>
+
+    </tabpanels>
+  </tabbox>
+</dialog>
