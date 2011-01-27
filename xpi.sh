@@ -1,1 +1,1 @@
-zip -r otrs.xpi install.rdf chrome/ chrome.manifest defaults/
+zip -r otrswatcher.xpi install.rdf chrome/ chrome.manifest defaults/
