@@ -1,4 +1,4 @@
-otrswatcher={
+var otrswatcher={
   "username":"",
   "password":"",
   "otrsjsonurl":"",
@@ -12,7 +12,7 @@ otrswatcher={
 
 function forEveryKind(cb){
   // go through every checkbox
-  kinds = ["queue", "watched", "responsible", "locked"];
+  var kinds = ["queue", "watched", "responsible", "locked"];
   for each(var kind in kinds){
       cb(kind);
   }
@@ -203,11 +203,22 @@ function doRequest(url, username, password, onload, method, otherpara){
   var thisonload=function (){
     onload(httpRequest.responseText);
   };
-  
+
+  /*
+  onreadystatechange = function()
+   { 
+       if (httpRequest.readyState==4 && httpRequest.status==200){
+	   dump(method + " - responseText =" + httpRequest.responseText +"\n");
+       }else{	   
+	   dump(method + " - readyState,status,statusText =" + httpRequest.readyState + ", " +httpRequest.status+ ", " +httpRequest.statusText +"\n");
+       }
+   }; 
+  */
   var req = url+ "?Method="+method+"&User="+encodeURIComponent(username)+"&Password="+encodeURIComponent(password)+"&Object=iPhoneObject";
   if (otherpara != null) req=req+"&Data="+otherpara;
   httpRequest.open("GET", req, true);
   httpRequest.onload = thisonload;
+  //httpRequest.onreadystatechange = onreadystatechange;
   httpRequest.channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
   httpRequest.send(null);
 }
@@ -262,7 +273,7 @@ function testLogin(){
     
     var disp = [];
     if (responseText != ""){
-      eval("result="+responseText);
+      eval("var result="+responseText);
       disp = [result.Result];
       if (result.Result == "successful"){
 	var data = result.Data[0];
@@ -290,7 +301,7 @@ function dispMyQueues(){
     
     var disp = [];
     if (responseText != ""){
-      eval("result="+responseText);
+      eval("var result="+responseText);
       if (result.Result == "successful"){
 	var queues = result.Data;
 	for each(var queue in queues) disp.push(queue.QueueName);
@@ -302,7 +313,7 @@ function dispMyQueues(){
     document.getElementById("myqueues").value=disp.join("|");
   };
 
-  doRequest(onload, "QueueView");
+  doRequestTest(onload, "QueueView");
   
 }
 
@@ -328,8 +339,15 @@ function countXXXTickets(methodname, kind, queuefunc){
     var bgcolor=label.parentNode.style.backgroundColor;
     
     if (responseText != ""){
-      eval("result="+responseText);
+      eval("var result="+responseText);
       if (result.Result == "successful"){
+	  // theres something odd - sometimes we get an "successfull" response, 
+	  // but the Data is an empty array, while there ARE tickets to be counted
+	  // if we get an empty array, we pretend we did not request anything yet
+	  // thus keeping labels unchanged!
+          if (result.Data.length == 0){
+	      return;
+	  }
 	count=queuefunc(result.Data);
 	if (isNaN(parseInt(count,10))){
 	  tttext = count;
@@ -359,7 +377,8 @@ function countFilteredQueueTickets(queues){
 
   var count=0;
   for each(var queue in queues){
-    if (otrswatcher.queuefilter.indexOf(queue.QueueName) == -1) count += parseInt(queue.NumberOfTickets,10);
+    if (otrswatcher.queuefilter.indexOf(queue.QueueName) == -1) 
+	count += parseInt(queue.NumberOfTickets,10);
   }
   return count;
 }
