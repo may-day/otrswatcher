@@ -12,8 +12,8 @@ var otrswatcher={
 
 function forEveryKind(cb){
   // go through every checkbox
-  var kinds = ["queue", "watched", "responsible", "locked"];
-  for each(var kind in kinds){
+  let kinds = ["queue", "watched", "responsible", "locked"];
+  for each(let kind in kinds){
       cb(kind);
   }
 }
@@ -21,47 +21,47 @@ function forEveryKind(cb){
 function changeColor(colorpick){
 
   // the example label's id is the same as the colorpick's one except it's prefixed with "example."
-  var idpart=colorpick.id;
+  let idpart=colorpick.id;
   document.getElementById("example."+idpart).style.backgroundColor=colorpick.color;
 }
 
 function savePref() {
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].
     getService(Components.interfaces.nsIPrefBranch);
 
-  var optprefix = "extensions.otrswatcher.";
+  let optprefix = "extensions.otrswatcher.";
   
   forEveryKind(
     function(kind){
-      var color=document.getElementById(kind).color;
+      let color=document.getElementById(kind).color;
       prefs.setCharPref(optprefix + kind +".color", color);
     }
   );
   
-  var checkintervall = document.getElementById("checkintervall").value;
+  let checkintervall = document.getElementById("checkintervall").value;
   prefs.setIntPref(optprefix + "checkintervall", checkintervall);
   
-  var queuefilter = document.getElementById("queuefilter").value;
+  let queuefilter = document.getElementById("queuefilter").value;
   prefs.setCharPref(optprefix + "queuefilter", queuefilter);
     
   
-  var otrsjsonurl = document.getElementById("otrsjsonurl").value;
+  let otrsjsonurl = document.getElementById("otrsjsonurl").value;
   prefs.setCharPref(optprefix + "otrsjsonurl", otrsjsonurl);
   
-  var on=document.getElementById("savepass").checked;
+  let on=document.getElementById("savepass").checked;
   prefs.setBoolPref(optprefix + "savepass", on);
   
-  var CC_loginManager = Components.classes["@mozilla.org/login-manager;1"];
-  var nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1",
+  let CC_loginManager = Components.classes["@mozilla.org/login-manager;1"];
+  let nsLoginInfo = new Components.Constructor("@mozilla.org/login-manager/loginInfo;1",
 					       Components.interfaces.nsILoginInfo,
 					       "init");
-  var username=document.getElementById("username").value;
-  var password=document.getElementById("password").value;
+  let username=document.getElementById("username").value;
+  let password=document.getElementById("password").value;
   
-  var authLoginInfo = new nsLoginInfo("otrswatcher-url", "OTRS Login", null, 
+  let authLoginInfo = new nsLoginInfo("otrswatcher-url", "OTRS Login", null, 
 				      username, password, true, true);
-  var loginManager = CC_loginManager.getService(Components.interfaces.nsILoginManager);
-  var logins = loginManager.findLogins({}, "otrswatcher-url", "OTRS Login", null);
+  let loginManager = CC_loginManager.getService(Components.interfaces.nsILoginManager);
+  let logins = loginManager.findLogins({}, "otrswatcher-url", "OTRS Login", null);
   try {
       if (logins[0]) {
         loginManager.removeLogin(logins[0]);
@@ -81,15 +81,15 @@ function savePref() {
 
 
 function loadPref(callback) {
-  var optprefix = "extensions.otrswatcher.";
-  var prefs = Components.classes["@mozilla.org/preferences-service;1"].
+  let optprefix = "extensions.otrswatcher.";
+  let prefs = Components.classes["@mozilla.org/preferences-service;1"].
     getService(Components.interfaces.nsIPrefService).getBranch(optprefix);
 
   
   forEveryKind(
     function(kind){
       try{
-	var color = prefs.getCharPref(kind+".color");
+	let color = prefs.getCharPref(kind+".color");
 	callback("color", kind, color);
       } catch (x) {
 
@@ -98,28 +98,28 @@ function loadPref(callback) {
   );
 
   try{
-    var checkintervall=prefs.getIntPref("checkintervall");
+    let checkintervall=prefs.getIntPref("checkintervall");
     callback("checkintervall", "checkintervall", checkintervall);
   } catch (x) {
 
   }
 
   try{
-    var queuefilter=prefs.getCharPref("queuefilter");
+    let queuefilter=prefs.getCharPref("queuefilter");
     callback("queuefilter", "queuefilter", queuefilter);
   } catch (x) {
 
   }
   
   try{
-    var otrsjsonurl = prefs.getCharPref("otrsjsonurl");
+    let otrsjsonurl = prefs.getCharPref("otrsjsonurl");
     callback("otrsjsonurl", "otrsjsonurl", otrsjsonurl);
   } catch (x) {
 
   }
   
   try{
-    var savepass=prefs.getBoolPref("savepass");
+    let savepass=prefs.getBoolPref("savepass");
     callback("savepass", "savepass", savepass);
   } catch (x) {
 
@@ -129,7 +129,7 @@ function loadPref(callback) {
 
 function cbLoadPrefSettings(what, which, value){
   if(what == "color" && value != ""){
-    var colorpick = document.getElementById(which);
+    let colorpick = document.getElementById(which);
     colorpick.color = value;
     changeColor(colorpick);
   }else if (what == "checkintervall"){
@@ -141,7 +141,7 @@ function cbLoadPrefSettings(what, which, value){
   }else if (what == "savepass"){
     document.getElementById("savepass").checked = value;
     if (value){
-      var up = getUserPass();
+      let up = getUserPass();
       document.getElementById("username").value = up[0];
       document.getElementById("password").value = up[1];
     }
@@ -181,12 +181,12 @@ function onloadStatusbar(){
 }
 
 function getUserPass(){
-  var CC_loginManager = Components.classes["@mozilla.org/login-manager;1"];
-  var loginManager = CC_loginManager.getService(Components.interfaces.nsILoginManager);
-  var erg = ["", ""];
+  let CC_loginManager = Components.classes["@mozilla.org/login-manager;1"];
+  let loginManager = CC_loginManager.getService(Components.interfaces.nsILoginManager);
+  let erg = ["", ""];
   
   try {
-    var logins = loginManager.findLogins({}, "otrswatcher-url", "OTRS Login", null);
+    let logins = loginManager.findLogins({}, "otrswatcher-url", "OTRS Login", null);
     if (logins[0]) {
       erg = [logins[0].username, logins[0].password];
     }       
@@ -198,85 +198,70 @@ function getUserPass(){
 }
 
 function doRequest(url, username, password, onload, method, otherpara){
-  var httpRequest = new XMLHttpRequest();
+  let httpRequest = new XMLHttpRequest();
   
-  var thisonload=function (){
-    onload(httpRequest.responseText);
-  };
 
   onreadystatechange = function()
    { 
-       if (httpRequest.readyState==4 && httpRequest.status==200){
-	   dump(method + " - responseText =" + httpRequest.responseText +"\n");
-       }else{	   
+       if (httpRequest.readyState==4 && httpRequest.status==200 && httpRequest.responseText == ""){
+	   dump(method + " - responseText is empty\n");
+       }
+       /*
+else{	   
 	   dump(method + " - readyState,status,statusText =" + httpRequest.readyState + ", " +httpRequest.status+ ", " +httpRequest.statusText +"\n");
        }
+       */
    }; 
-  var req = url+ "?Method="+method+"&User="+encodeURIComponent(username)+"&Password="+encodeURIComponent(password)+"&Object=iPhoneObject";
+  let req = url+ "?Method="+method+"&User="+encodeURIComponent(username)+"&Password="+encodeURIComponent(password)+"&Object=iPhoneObject";
   if (otherpara != null) req=req+"&Data="+otherpara;
   //dump(req+"\n")
   httpRequest.open("GET", req, true);
-  httpRequest.onload = thisonload;
-  //httpRequest.onreadystatechange = onreadystatechange;
+  httpRequest.onload = function (){ onload(httpRequest.responseText); };
+  httpRequest.onreadystatechange = onreadystatechange;
   httpRequest.channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
   httpRequest.send(null);
 }
 
 function doRequestTest(onload, method, otherpara){
-  var username=document.getElementById("username").value;
-  var password=document.getElementById("password").value;
-  var otrsjsonurl = document.getElementById("otrsjsonurl").value;
+  let username=document.getElementById("username").value;
+  let password=document.getElementById("password").value;
+  let otrsjsonurl = document.getElementById("otrsjsonurl").value;
   
-  var httpRequest = new XMLHttpRequest();
-  
-  var thisonload=function (){
-    onload(httpRequest.responseText);
-  };
-
   doRequest(otrsjsonurl, username, password, onload, method, otherpara);
   
 }
 
 function doRequestLive(onload, method, otherpara){
-  var username="";
-  var password="";
+  let username="";
+  let password="";
   if (otrswatcher.savepass){
-    var up = getUserPass();
+    let up = getUserPass();
     username=up[0];
     password=up[1];
   }else{
     username=otrswatcher.username || "";
     password=otrswatcher.password || "";
   }
-  var otrsjsonurl = otrswatcher.otrsjsonurl;
+  let otrsjsonurl = otrswatcher.otrsjsonurl;
   
   if (otrsjsonurl == ""){
-    result='{"Result":"failed", "Message":"Please configure otrswatcher first"}';
-    onload(result);    
+    onload('{"Result":"failed", "Message":"Please configure otrswatcher first"}');    
   }else{
-    
-  
-    var httpRequest = new XMLHttpRequest();
-  
-    var thisonload=function (){
-      onload(httpRequest.responseText);
-    };
-  
     doRequest(otrsjsonurl, username, password, onload, method, otherpara);
   }
   
 }
 
 function testLogin(){
-  var onload = function(responseText){
+  let onload = function(responseText){
     
-    var disp = [];
+    let disp = [];
     if (responseText != ""){
-      eval("var result="+responseText);
+	let result=getJSONResult(responseText);
       disp = [result.Result];
       if (result.Result == "successful"){
-	var data = result.Data[0];
-	for(var key in data) disp.push(key +"=" + data[key]);
+	let data = result.Data[0];
+	for(let key in data) disp.push(key +"=" + data[key]);
 	
       }
     }else{
@@ -296,14 +281,14 @@ function clearTestResult(){
 
 function dispMyQueues(){
   
-  var onload = function(responseText){
+  let onload = function(responseText){
     
-    var disp = [];
+    let disp = [];
     if (responseText != ""){
-      eval("var result="+responseText);
+	let result=getJSONResult(responseText);
       if (result.Result == "successful"){
-	var queues = result.Data;
-	for each(var queue in queues) disp.push(queue.QueueName);
+	let queues = result.Data;
+	for each(let queue in queues) disp.push(queue.QueueName);
 	
       }
     }else{
@@ -318,7 +303,7 @@ function dispMyQueues(){
 
 function installTimer(){
   uninstallTimer();
-  var milli = otrswatcher.checkintervall * 60 * 1000;
+  let milli = otrswatcher.checkintervall * 60 * 1000;
   otrswatcher.timerid = window.setInterval(updateStatusbar, milli);
 }
 
@@ -329,16 +314,16 @@ function uninstallTimer(){
 }
 
 
-function countXXXTickets(methodname, kind, queuefunc){
-  var onload = function(responseText){
+function countXXXTickets(methodname, kind, queuefunc, chainfunc){
+  let onload = function(responseText){
     
-    var count="?";
-    var tttext=kind;
-    var label=document.getElementById("otrswatcher." + kind);
-    var bgcolor=label.parentNode.style.backgroundColor;
+    let count="?";
+    let tttext=kind;
+    let label=document.getElementById("otrswatcher." + kind);
+    let bgcolor=label.parentNode.style.backgroundColor;
     
     if (responseText != ""){
-      eval("var result="+responseText);
+	let result=getJSONResult(responseText);
       if (result.Result == "successful"){
 	  // theres something odd - sometimes we get an "successfull" response, 
 	  // but the Data is an empty array, while there ARE tickets to be counted
@@ -365,8 +350,9 @@ function countXXXTickets(methodname, kind, queuefunc){
     
     label.value=count;
     label.style.backgroundColor = bgcolor;
-    var tooltip=document.getElementById("otrswatcher."+kind+".tooltip");
+    let tooltip=document.getElementById("otrswatcher."+kind+".tooltip");
     tooltip.label=tttext;
+    if (chainfunc != null) chainfunc();
   };
 
   doRequestLive(onload, methodname);
@@ -374,8 +360,8 @@ function countXXXTickets(methodname, kind, queuefunc){
 
 function countFilteredQueueTickets(queues){
 
-  var count=0;
-  for each(var queue in queues){
+  let count=0;
+  for each(let queue in queues){
     if (otrswatcher.queuefilter.indexOf("|"+queue.QueueName+"|") == -1) 
 	count += parseInt(queue.NumberOfTickets,10);
   }
@@ -383,8 +369,8 @@ function countFilteredQueueTickets(queues){
 }
 
 function numberOfTicketsInAll(queues){
-  var count="There was no result for the 'All' Filter.";
-  for each(var queue in queues){
+  let count="There was no result for the 'All' Filter.";
+  for each(let queue in queues){
     if (queue.FilterName=="All") {
       count = parseInt(queue.NumberOfTickets,10);
       break;
@@ -394,16 +380,16 @@ function numberOfTicketsInAll(queues){
 }
 
 function countQueueTickets(){
-  countXXXTickets("QueueView", "queue", countFilteredQueueTickets);
+    countXXXTickets("QueueView", "queue", countFilteredQueueTickets, countResponsibleTickets);
 }
 
 
 function countResponsibleTickets(){
-  countXXXTickets("ResponsibleView", "responsible", numberOfTicketsInAll);
+    countXXXTickets("ResponsibleView", "responsible", numberOfTicketsInAll, countLockedTickets);
 }
 
 function countLockedTickets(){
-  countXXXTickets("LockedView", "locked", numberOfTicketsInAll);
+    countXXXTickets("LockedView", "locked", numberOfTicketsInAll, countWatchedTickets);
 }
   
 function countWatchedTickets(){
@@ -412,9 +398,9 @@ function countWatchedTickets(){
 
 function updateStatusbar(){
   countQueueTickets();
-  countWatchedTickets();
-  countResponsibleTickets();
-  countLockedTickets();
+  //countWatchedTickets();
+  //countResponsibleTickets();
+  //countLockedTickets();
 }
 
 function openOTRS(queryString){
@@ -422,8 +408,8 @@ function openOTRS(queryString){
   if (otrswatcher.otrsjsonurl == ""){
     alert("Erst konfigurieren!");
   }else{
-    var otrsjsonurl = otrswatcher.otrsjsonurl;
-    var url = otrsjsonurl.replace('json.pl', 'index.pl');
+    let otrsjsonurl = otrswatcher.otrsjsonurl;
+    let url = otrsjsonurl.replace('json.pl', 'index.pl');
     if (queryString != null){
       url = url + "?"+queryString;
     }
@@ -433,7 +419,7 @@ function openOTRS(queryString){
 }
 
 function openTicket(QueueID, TicketID, ArticleID){
-  var queryString ="Action=AgentTicketZoom&TicketID="+TicketID+"&ArticleID="+ArticleID+"&QueueID="+QueueID;
+  let queryString ="Action=AgentTicketZoom&TicketID="+TicketID+"&ArticleID="+ArticleID+"&QueueID="+QueueID;
   openOTRS(queryString);
 }
 
@@ -502,16 +488,16 @@ unregister : function() {
 
 function listTicketsInQueueOrView(popup, method, QueueID){
   
-  gettickets = function(responseText){
+  let gettickets = function(responseText){
     
     if (responseText != ""){
-      eval("var result="+responseText);
+	let result=getJSONResult(responseText);
       if (result.Result == "successful"){
-	tickets = result.Data;
-	for each(var ticket in tickets){
+	for each(let ticket in result.Data){
 
-	  var menuitem = document.createElement("menuitem");
-	  menuitem.setAttribute("label", ticket.Subject);
+	  let menuitem = document.createElement("menuitem");
+	  let label = ticket.Title || ticket.Subject;
+	  menuitem.setAttribute("label", label);
 	  menuitem.setAttribute("oncommand", "openTicket("+ticket.QueueID+", "+ticket.TicketID+", "+ticket.ArticleID+");");
 	  popup.appendChild(menuitem);
 	}
@@ -522,7 +508,7 @@ function listTicketsInQueueOrView(popup, method, QueueID){
   if ((method=="QueueView" && popup.childNodes.length == 0) 
     || (method!="QueueView" && popup.childNodes.length == 3)){
     
-    var prop1="Filter";
+    let prop1="Filter";
     if (method=="QueueView"){
       prop1 = '"QueueID":'+QueueID;
     }else{
@@ -543,22 +529,22 @@ function listQueuesInMenu(popup){
   
   getqueues = function(responseText){
     
-    var queues=new Array;
+    let queues=new Array;
   
     if (responseText != ""){
-      eval("var result="+responseText);
+	let result=getJSONResult(responseText);
       if (result.Result == "successful"){
 	queues = result.Data;
       }
     }
 
-    for each(var queue in queues){
+    for each(let queue in queues){
       if (otrswatcher.queuefilter.indexOf("|"+queue.QueueName+"|") == -1){
 	// create sub submenu
 
-	var menu = document.createElement("menu");
+	let menu = document.createElement("menu");
 	menu.setAttribute("label", queue.QueueName + "(" + queue.NumberOfTickets + ")");
-	var submenuPopup = document.createElement("menupopup");
+	let submenuPopup = document.createElement("menupopup");
 	submenuPopup.setAttribute("onpopupshowing", "listTicketsInQueueOrView(this, 'QueueView', "+queue.QueueID+");");
 	menu.appendChild(submenuPopup);
 	popup.appendChild(menu);
@@ -578,12 +564,18 @@ function removeMenuEntries(popup, event){
    
   if (event.target.id == event.currentTarget.id){
 
-    var range = document.createRange();
-    var afterNode = popup.childNodes[2];
-    var lastNode = popup.childNodes[popup.childNodes.length-1];
+    let range = document.createRange();
+    let afterNode = popup.childNodes[2];
+    let lastNode = popup.childNodes[popup.childNodes.length-1];
     range.setStartAfter(afterNode);
     range.setEndAfter(lastNode);
     range.deleteContents();
     
   }
+}
+
+function getJSONResult(result){
+    let nativeJSON = Components.classes["@mozilla.org/dom/json;1"]
+	.createInstance(Components.interfaces.nsIJSON);
+    return nativeJSON.decode(result);
 }
