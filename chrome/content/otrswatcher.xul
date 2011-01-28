@@ -39,11 +39,39 @@
 <tooltip id="otrswatcher.responsible.tooltip" orient="vertical" style="background-color: #33DD00;" label="responsible" />
 <tooltip id="otrswatcher.locked.tooltip" orient="vertical" style="background-color: #33DD00;" label="locked" />
 
+<menupopup id="queue.popup" onpopupshowing="listQueuesInMenu(this);" onpopuphidden="removeMenuEntries(this, event);">
+  <menuitem label="&ow.menu.options.label;" 
+	    oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); win.addEventListener('unload', onloadStatusbar, false); win.focus();"/>
+  <menuitem label="&ow.menu.otrs.label;" oncommand="openOTRS();"/>
+  <menuseparator/>
+</menupopup>
+
+<menupopup id="locked.popup" onpopupshowing="listTicketsInQueueOrView(this, 'LockedView');" onpopuphidden="removeMenuEntries(this, event);">
+  <menuitem label="&ow.menu.options.label;" 
+	    oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); win.addEventListener('unload', onloadStatusbar, false); win.focus();"/>
+  <menuitem label="&ow.menu.otrs.label;" oncommand="openOTRS();"/>
+  <menuseparator/>
+</menupopup>
+
+<menupopup id="watched.popup" onpopupshowing="listTicketsInQueueOrView(this, 'WatchedView');" onpopuphidden="removeMenuEntries(this, event);">
+  <menuitem label="&ow.menu.options.label;" 
+	    oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); win.addEventListener('unload', onloadStatusbar, false); win.focus();"/>
+  <menuitem label="&ow.menu.otrs.label;" oncommand="openOTRS();"/>
+  <menuseparator/>
+</menupopup>
+
+<menupopup id="responsible.popup" onpopupshowing="listTicketsInQueueOrView(this, 'ResponsibleView');" onpopuphidden="removeMenuEntries(this, event);">
+  <menuitem label="&ow.menu.options.label;" 
+	    oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); win.addEventListener('unload', onloadStatusbar, false); win.focus();"/>
+  <menuitem label="&ow.menu.otrs.label;" oncommand="openOTRS();"/>
+  <menuseparator/>
+</menupopup>
+
 	    <hbox id="otrswatchercolumns">
-	      <label id="otrswatcher.queue" value="?" tooltip="otrswatcher.queue.tooltip"/>
-	      <label id="otrswatcher.watched" value="?" tooltip="otrswatcher.watched.tooltip"/>
-	      <label id="otrswatcher.responsible" value="?" tooltip="otrswatcher.responsible.tooltip"/>
-	      <label id="otrswatcher.locked" value="?" tooltip="otrswatcher.locked.tooltip"/>
+	      <label id="otrswatcher.queue" value="?" tooltip="otrswatcher.queue.tooltip" context="queue.popup"/>
+	      <label id="otrswatcher.watched" value="?" tooltip="otrswatcher.watched.tooltip" context="watched.popup"/>
+	      <label id="otrswatcher.responsible" value="?" tooltip="otrswatcher.responsible.tooltip" context="responsible.popup"/>
+	      <label id="otrswatcher.locked" value="?" tooltip="otrswatcher.locked.tooltip" context="locked.popup"/>
 	    </hbox>
 	  </hbox>
 	</statusbarpanel>

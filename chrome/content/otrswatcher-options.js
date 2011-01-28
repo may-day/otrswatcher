@@ -204,7 +204,6 @@ function doRequest(url, username, password, onload, method, otherpara){
     onload(httpRequest.responseText);
   };
 
-  /*
   onreadystatechange = function()
    { 
        if (httpRequest.readyState==4 && httpRequest.status==200){
@@ -213,9 +212,9 @@ function doRequest(url, username, password, onload, method, otherpara){
 	   dump(method + " - readyState,status,statusText =" + httpRequest.readyState + ", " +httpRequest.status+ ", " +httpRequest.statusText +"\n");
        }
    }; 
-  */
   var req = url+ "?Method="+method+"&User="+encodeURIComponent(username)+"&Password="+encodeURIComponent(password)+"&Object=iPhoneObject";
   if (otherpara != null) req=req+"&Data="+otherpara;
+  //dump(req+"\n")
   httpRequest.open("GET", req, true);
   httpRequest.onload = thisonload;
   //httpRequest.onreadystatechange = onreadystatechange;
@@ -233,7 +232,7 @@ function doRequestTest(onload, method, otherpara){
   var thisonload=function (){
     onload(httpRequest.responseText);
   };
-  
+
   doRequest(otrsjsonurl, username, password, onload, method, otherpara);
   
 }
@@ -377,7 +376,7 @@ function countFilteredQueueTickets(queues){
 
   var count=0;
   for each(var queue in queues){
-    if (otrswatcher.queuefilter.indexOf(queue.QueueName) == -1) 
+    if (otrswatcher.queuefilter.indexOf("|"+queue.QueueName+"|") == -1) 
 	count += parseInt(queue.NumberOfTickets,10);
   }
   return count;
@@ -418,16 +417,24 @@ function updateStatusbar(){
   countLockedTickets();
 }
 
-function openOTRS(){
+function openOTRS(queryString){
   
   if (otrswatcher.otrsjsonurl == ""){
     alert("Erst konfigurieren!");
   }else{
     var otrsjsonurl = otrswatcher.otrsjsonurl;
     var url = otrsjsonurl.replace('json.pl', 'index.pl');
+    if (queryString != null){
+      url = url + "?"+queryString;
+    }
     window.content.open(url, "otrswatcher-otrs");
   }
 
+}
+
+function openTicket(QueueID, TicketID, ArticleID){
+  var queryString ="Action=AgentTicketZoom&TicketID="+TicketID+"&ArticleID="+ArticleID+"&QueueID="+QueueID;
+  openOTRS(queryString);
 }
 
 /**
@@ -490,4 +497,93 @@ unregister : function() {
   observerService.removeObserver(this,"em-action-requested");
   observerService.removeObserver(this,"quit-application-granted");
 }
+}
+
+
+function listTicketsInQueueOrView(popup, method, QueueID){
+  
+  gettickets = function(responseText){
+    
+    if (responseText != ""){
+      eval("var result="+responseText);
+      if (result.Result == "successful"){
+	tickets = result.Data;
+	for each(var ticket in tickets){
+
+	  var menuitem = document.createElement("menuitem");
+	  menuitem.setAttribute("label", ticket.Subject);
+	  menuitem.setAttribute("oncommand", "openTicket("+ticket.QueueID+", "+ticket.TicketID+", "+ticket.ArticleID+");");
+	  popup.appendChild(menuitem);
+	}
+      }
+    }
+  };
+
+  if ((method=="QueueView" && popup.childNodes.length == 0) 
+    || (method!="QueueView" && popup.childNodes.length == 3)){
+    
+    var prop1="Filter";
+    if (method=="QueueView"){
+      prop1 = '"QueueID":'+QueueID;
+    }else{
+      prop1 = '"Filter":"All"';
+    }
+    doRequestLive(gettickets, method, '{' + prop1 +', "Limit":10}');
+  }
+
+}
+
+function listQueuesInMenu(popup){
+ 
+  // 1. get queues 
+  // 2. filter out disliked queues
+  // 3. for every remaining queue get a list of max 10 entries and build a menupopup containing sender and subject for every entry
+  // 4. insert those built menupopups as submenue in <popup>
+  
+  
+  getqueues = function(responseText){
+    
+    var queues=new Array;
+  
+    if (responseText != ""){
+      eval("var result="+responseText);
+      if (result.Result == "successful"){
+	queues = result.Data;
+      }
+    }
+
+    for each(var queue in queues){
+      if (otrswatcher.queuefilter.indexOf("|"+queue.QueueName+"|") == -1){
+	// create sub submenu
+
+	var menu = document.createElement("menu");
+	menu.setAttribute("label", queue.QueueName + "(" + queue.NumberOfTickets + ")");
+	var submenuPopup = document.createElement("menupopup");
+	submenuPopup.setAttribute("onpopupshowing", "listTicketsInQueueOrView(this, 'QueueView', "+queue.QueueID+");");
+	menu.appendChild(submenuPopup);
+	popup.appendChild(menu);
+
+      }
+    }
+    
+  };
+  
+  if (popup.childNodes.length < 4){
+    doRequestLive(getqueues, "QueueView");
+  }
+}
+
+
+function removeMenuEntries(popup, event){
+   
+  if (event.target.id == event.currentTarget.id){
+
+    var range = document.createRange();
+    var afterNode = popup.childNodes[2];
+    var lastNode = popup.childNodes[popup.childNodes.length-1];
+    range.setStartAfter(afterNode);
+    range.setEndAfter(lastNode);
+    range.deleteContents();
+    
+  }
 }
