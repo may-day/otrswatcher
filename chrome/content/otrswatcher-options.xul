@@ -13,13 +13,14 @@
 	title="&ow.prefs.title;"
 	
 	buttons="accept,cancel"
-	ondialogaccept="savePref();">
+	ondialogaccept="otrswatcher.savePref();">
 
-  <script type="application/x-javascript" src="chrome://otrswatcher/content/otrswatcher-options.js"/>
+  <script type="application/x-javascript" src="chrome://otrswatcher/content/otrswatcher-options.js" />
 
-    <script type="application/x-javascript">
-      window.addEventListener("load", onloadSettings, false);
-    </script>
+  <script>
+    var otrswatcher = new OTRSWatcher().init();
+    window.addEventListener("load", function(){otrswatcher.onloadSettings();}, false);
+  </script>
 
   <stringbundleset id="stringbundleset">
     <stringbundle id="ow-strings" src="chrome://otrswatcher/locale/otrswatcher.properties"/>
@@ -44,23 +45,20 @@
 	  <rows>
 	    <row>
 	      <label control="otrsjsonurl" value="OTRS json-URL"/>
-	      <textbox id="otrsjsonurl" value="https://support.your-company.com/otrs/json.pl" size="45" onchange="clearTestResult();"/>
+	      <textbox id="otrsjsonurl" value="https://support.your-company.com/otrs/json.pl" size="45" onchange="otrswatcher.clearTestResult();"/>
 	    </row>
 	    <row>
 	      <label control="username" value="username"/>
-	      <textbox id="username" value=""  onchange="clearTestResult();"/>
+	      <textbox id="username" value=""  onchange="otrswatcher.clearTestResult();"/>
 	    </row>
 	    <row>
 	      <label control="password" value="password"/>
-	      <textbox id="password" value=""  type="password"  onchange="clearTestResult();"/>
-	    </row>
-	    <row>
-	      <label control="savepass" value="User &amp; Passwort speichern?"/><checkbox id="savepass"/>
+	      <textbox id="password" value=""  type="password"  onchange="otrswatcher.clearTestResult();"/>
 	    </row>
 	 </rows>
 	</grid>
       <vbox>
-      <button label="test login" oncommand="testLogin();"/>
+      <button label="test login" oncommand="otrswatcher.testLogin();"/>
       </vbox>
       </hbox>
       <label id="accesstest" value="" crop="end"/>
@@ -80,19 +78,19 @@
 	    <rows>
 	      <row>
 		<label>Queue</label>
-		<hbox><colorpicker type="button" onchange="changeColor(this);" id="queue"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="queue"/></hbox>
 	      </row>
 	      <row>
 		<label>Beobachtete</label>
-		<hbox><colorpicker type="button" onchange="changeColor(this);" id="watched"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="watched"/></hbox>
 	      </row>
 	      <row>
 		<label>Verantwortlich</label>
-		<hbox><colorpicker type="button" onchange="changeColor(this);" id="responsible"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="responsible"/></hbox>
 	      </row>
 	      <row>
 		<label>Gesperrte</label>
-		<hbox><colorpicker type="button" onchange="changeColor(this);" id="locked" /></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="locked" /></hbox>
 	      </row>
 	    </rows>
 	  </grid>
@@ -116,7 +114,7 @@
 	  <hbox>
 	    <label control="queuefilter" value="ignoriere Queues:"/>
 	    <textbox size="30" id="queuefilter" value="" />
-	    <button label="meine Queues abfragen" oncommand="dispMyQueues();"/>
+	    <button label="meine Queues abfragen" oncommand="otrswatcher.dispMyQueues();"/>
 	  </hbox>
 	  <hbox>
 	    <textbox size="60" placeholder="meine Queues" id="myqueues" value="" readonly="true" />
