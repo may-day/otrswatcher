@@ -94,7 +94,11 @@ function OTRSWatcher(){
     };
     
     for each(let [what,which,preftype, elementid] in this.prefvars){
-      let value=document.getElementById(elementid).value;
+      let value;
+      if (what == "color")
+	value=document.getElementById(elementid).color;
+      else
+	value=document.getElementById(elementid).value;
       accessfunc[preftype](which, value);
     }
   
@@ -329,10 +333,13 @@ function OTRSWatcher(){
    */
   this.installTimer = function (){
     this.uninstallTimer();
-    let milli = this.checkintervall * 60 * 1000;
-    this.timerid = window.setInterval(this.checkTickets, milli);
-    // and check tickets immediate
-    this.checkTickets();
+    if (!isNaN(this.checkintervall)){
+      let milli = this.checkintervall * 60 * 1000;
+      let ow = this;
+      this.timerid = window.setInterval(function(){ ow.checkTickets(); }, milli);
+      // and check tickets immediate
+      this.checkTickets();
+    }
   };
   
   /**
