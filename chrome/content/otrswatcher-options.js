@@ -3,6 +3,7 @@ function OTRSWatcher(){
   this.password = "";
   this.otrsjsonurl = "";
   this.timerid = null;
+  this.entriespermenu=10;
 
   this.optprefix = "extensions.otrswatcher";
   this.MY_EXTENSION_UUID = "otrswatcher@kraemer.norman.at.googlemail.com";
@@ -10,24 +11,36 @@ function OTRSWatcher(){
   this.prefvars = [
     //["what its about", "name in prefs", "type", "id in optionsdialog"]
     ["checkintervall", "checkintervall", "int", "checkintervall"],
+    ["entriespermenu", "entriespermenu", "int", "entriespermenu"],
     ["queuefilter", "queuefilter", "char", "queuefilter"],
     ["otrsjsonurl", "otrsjsonurl", "char", "otrsjsonurl"]
   ];
   
 
-  this.kinds = {"queue":"QueueView", 
-		"watched":"WatchedView", 
-		"responsible":"ResponsibleView", 
-		"locked":"LockedView"
-	       };
-  
   /**
    * Get the view associated with a kind.
    * @param {String} kind
    * @return {String} the viewname associated with the kind.
    */
   this.viewOfKind = function (kind){
-    return this.kinds[kind];
+    return this.kinds[kind]["view"];
+  };
+
+  /**
+   * Get the count function associated with a kind.
+   * @param {String} kind
+   * @return {Function} the function that counts the tickets given the result of an iPhoneHandle call
+   */
+  this.countOfKind = function (kind){
+    return this.kinds[kind]["count"];
+  };
+  /**
+   * Get the list function associated with a kind.
+   * @param {String} kind
+   * @return {Function} the function that lists the tickets given the result of an iPhoneHandle call
+   */
+  this.listOfKind = function (kind){
+    return this.kinds[kind]["list"];
   };
   
   /**
@@ -53,7 +66,8 @@ function OTRSWatcher(){
     
     var accessfunc = {
       "char":prefs.getCharPref,
-      "int":prefs.getIntPref
+      "int":prefs.getIntPref,
+      "bool":prefs.getBoolPref
     };
     
     for each(let [what,which,preftype, elementid] in this.prefvars){
@@ -72,6 +86,8 @@ function OTRSWatcher(){
   this.init = function(){
     this.forEveryKind(function(kind){
 			this.prefvars.push(["color", kind+".color", "char", kind]);});
+    this.forEveryKind(function(kind){
+			this.prefvars.push(["check", kind+".check", "bool", kind+".check"]);});
     return this;
   };
   
@@ -90,15 +106,20 @@ function OTRSWatcher(){
   
     var accessfunc = {
       "char":prefs.setCharPref,
-      "int":prefs.setIntPref
+      "int":prefs.setIntPref,
+      "bool":prefs.setBoolPref
     };
     
     for each(let [what,which,preftype, elementid] in this.prefvars){
       let value;
       if (what == "color")
 	value=document.getElementById(elementid).color;
-      else
-	value=document.getElementById(elementid).value;
+      else{
+	if (what == "check")
+	  value=document.getElementById(elementid).checked;
+	else
+	  value=document.getElementById(elementid).value;
+	}
       accessfunc[preftype](which, value);
     }
   
@@ -162,13 +183,24 @@ function OTRSWatcher(){
   
   
   /**
+   * Show or hide example label based on checkboxstatus.
+   */
+  this.showExample = function (checkbox){
+    let idpart=checkbox.id.split(".")[0];
+    document.getElementById("example."+idpart).hidden=!checkbox.checked;
+  };
+  
+  /**
    * The method called on the "load" event of the options dialog.
    */
   this.onloadSettings = function (){
     
     let initfunc=function (what, which, value, elementid){
-      if (value != ""){
-	var el=document.getElementById(elementid);
+      var el=document.getElementById(elementid);
+      if(what == "check"){ 
+	el.checked=value; this.showExample(el);
+      }
+      else if (value != ""){
 	el.value = value;
 	if(what == "color"){ el.color=value; this.changeColorOnExample(el); }
       }
@@ -189,6 +221,11 @@ function OTRSWatcher(){
 		    if(value != ""){
 		      this[which] = value;
 		    }
+		    if(what == "check"){
+		      var el=document.getElementById("otrswatcher."+(elementid.split(".")[0]));
+		      el.hidden = !value;
+		    }
+		    
 		  });
 		  
     this.installTimer();
@@ -285,7 +322,9 @@ function OTRSWatcher(){
 	  
 	}
       }else{
-	disp = ["There was no output in the requests result."];
+        let stringsBundle = document.getElementById("string-bundle");
+        let response_was_empty = stringsBundle.getString('response_was_empty');
+	disp = [response_was_empty];
       }
       document.getElementById("accesstest").value=disp.join(", ");
     };
@@ -319,7 +358,9 @@ function OTRSWatcher(){
 	  
 	}
       }else{
-	disp = ["There was no output in the requests result."];
+        let stringsBundle = document.getElementById("string-bundle");
+        let response_was_empty = stringsBundle.getString('response_was_empty');
+	disp = [response_was_empty];
       }
       document.getElementById("myqueues").value=disp.join("|");
     };
@@ -363,8 +404,9 @@ function OTRSWatcher(){
   this.countTickets = function (kind, countfunc, chainfunc){
     let onload = function(responseText){
       
+      let stringsBundle = document.getElementById("string-bundle");
       let count="?";
-      let tttext=kind;
+      let tttext=stringsBundle.getString(kind);
       let label=document.getElementById("otrswatcher." + kind);
       let bgcolor=label.parentNode.style.backgroundColor;
       
@@ -391,7 +433,7 @@ function OTRSWatcher(){
 	  tttext = responseText;
 	}
       }else{
-	tttext = "There was no output in the requests result.";
+        tttext = stringsBundle.getString('response_was_empty');
       }
       
       label.value=count;
@@ -431,7 +473,8 @@ function OTRSWatcher(){
    * @return {int} number of tickets
    */
   this.numberOfTicketsInAll = function (queues){
-    let count="There was no result for the 'All' Filter.";
+    let stringsBundle = document.getElementById("string-bundle");
+    let count = stringsBundle.getString('no_result_in_all');
     for each(let queue in queues){
       if (queue.FilterName=="All") {
 	count = parseInt(queue.NumberOfTickets,10);
@@ -444,29 +487,29 @@ function OTRSWatcher(){
   /**
    * Count tickets in queue.
    */
-  this.countQueueTickets = function (){
-    this.countTickets("queue", this.countFilteredQueueTickets, this.countResponsibleTickets);
+  this.countQueueTickets = function (chainfunc){
+    this.countTickets("queue", this.countFilteredQueueTickets, chainfunc);
   };
 
   /**
    * Count responsible tickets .
    */
-  this.countResponsibleTickets = function (){
-    this.countTickets("responsible", this.numberOfTicketsInAll, this.countLockedTickets);
+  this.countResponsibleTickets = function (chainfunc){
+    this.countTickets("responsible", this.numberOfTicketsInAll, chainfunc);
   };
 
   /**
    * Count locked tickets .
    */
-  this.countLockedTickets = function (){
-    this.countTickets("locked", this.numberOfTicketsInAll, this.countWatchedTickets);
+  this.countLockedTickets = function (chainfunc){
+    this.countTickets("locked", this.numberOfTicketsInAll, chainfunc);
   };
   
   /**
    * Count watched tickets .
    */
-  this.countWatchedTickets = function (){
-    this.countTickets("watched", this.numberOfTicketsInAll);
+  this.countWatchedTickets = function (chainfunc){
+    this.countTickets("watched", this.numberOfTicketsInAll, chainfunc);
   };
   
   /**
@@ -474,11 +517,87 @@ function OTRSWatcher(){
    */
   this.checkTickets=function (){
     //alert("checktickets this="+this);
+    let funcs = new Array;
+    funcs.push(this.showLoadingIcon);
+    this.forEveryKind(
+      function(kind){
+	if (this[kind+".check"] != false){
+	  funcs.push(this.countOfKind(kind));
+	  funcs.push(this.listOfKind(kind));
+	}
+      }
+    );
+    funcs.push(this.removeLoadingIcon);
+    // if we have more than 2 functions (the icon loading/removing functions)
+    // then we start the batch
+    if (funcs.length>2)
+      this.nextChainedFunc(funcs);
+  };
+  
+  /**
+   * Call the next function in the chain. That function, in turn,  gets a callback to nextChainedFunc 
+   * with the remaining functions.
+   * @param {Array} aFuncs an array of functions that take a callback as the sole parameter
+   */
+  this.nextChainedFunc = function(aFuncs){
+    if (aFuncs != null && aFuncs.length>0){
+      
+      let func = aFuncs.shift();
+      let ow = this;
+      func.apply(ow, [function(){ow.nextChainedFunc(aFuncs);}]);
+    }
+  };
+  
+  /**
+   * list tickets in queue.
+   */
+  this.listQueueTickets = function (chainfunc){
+    let popup=document.getElementById("queue.popup");
+    this.listQueuesInMenu(popup, chainfunc);
+  };
 
-    this.countQueueTickets();
-    //countWatchedTickets();
-    //countResponsibleTickets();
-    //countLockedTickets();
+  /**
+   * list responsible tickets .
+   */
+  this.listResponsibleTickets = function (chainfunc){
+    let popup=document.getElementById("responsible.popup");
+    this.listTicketsInQueueOrView(popup, "ResponsibleView", null, chainfunc);
+  };
+
+  /**
+   * list locked tickets .
+   */
+  this.listLockedTickets = function (chainfunc){
+    let popup=document.getElementById("locked.popup");
+    this.listTicketsInQueueOrView(popup, "LockedView", null, chainfunc);
+  };
+  
+  /**
+   * list watched tickets .
+   */
+  this.listWatchedTickets = function (chainfunc){
+    let popup=document.getElementById("watched.popup");
+    this.listTicketsInQueueOrView(popup, "WatchedView", null, chainfunc);
+  };
+  
+  /**
+   * Remove throbbing icon
+   */
+  this.removeLoadingIcon = function(chainfunc){
+    document.getElementById("loaderimg").hidden=true;
+    document.getElementById("das-o").hidden=false;
+    document.getElementById("loaderimg").removeAttribute("src");
+    if (chainfunc != null) chainfunc.apply(this);
+  };
+
+  /**
+   * Show throbbing icon
+   */
+  this.showLoadingIcon = function(chainfunc){
+    document.getElementById("loaderimg").setAttribute("src", "chrome://otrswatcher/skin/Throbber.gif");
+    document.getElementById("das-o").hidden=true;
+    document.getElementById("loaderimg").hidden=false;
+    if (chainfunc != null) chainfunc.apply(this);
   };
   
   /**
@@ -491,7 +610,9 @@ function OTRSWatcher(){
   this.openOTRS = function (QueueID, TicketID, ArticleID){
     
     if (otrswatcher.otrsjsonurl == ""){
-      alert("Erst konfigurieren!");
+      let stringsBundle = document.getElementById("string-bundle");
+      let cfg = stringsBundle.getString('configure_first');
+      alert(cfg);
     }else{
       let otrsjsonurl = this.otrsjsonurl;
       let url = otrsjsonurl.replace('json.pl', 'index.pl');
@@ -509,8 +630,9 @@ function OTRSWatcher(){
    * @param {Element} popup a menupopup which will contain the tickets as menuentries
    * @param {String} method a method to call to collect the tickets from otrs, e.g. QueueView or LockedView
    * @param {String} QueueID if method is "QueueView" the this is needed to specify the queue, otherwise ignored
+   * @param {Function} chainfunc optional function to call as last op
    */
-  this.listTicketsInQueueOrView = function (popup, method, QueueID){
+  this.listTicketsInQueueOrView = function (popup, method, QueueID, chainfunc){
     
     let gettickets = function(responseText){
       
@@ -527,9 +649,11 @@ function OTRSWatcher(){
 	  }
 	}
       }
+      if (chainfunc != null)
+	chainfunc.apply(this);
     };
 
-    if (popup.childNodes.length == 0){
+//    if (popup.childNodes.length == 0){
       
       let prop1="Filter";
       if (method=="QueueView"){
@@ -539,16 +663,17 @@ function OTRSWatcher(){
 	prop1 = '"Filter":"All"';
       }
       
-      this.doRequestLive(gettickets, method, '{' + prop1 +', "Limit":10}');
-    }
+      this.doRequestLive(gettickets, method, '{' + prop1 +', "Limit":'+this.entriespermenu+'}');
+//    }
 
   };
 
   /**
    * List the queue the user wants to see as submenuentries in popup.
    * @param {Element} popup a menupopup which will contain the queuenames as submenuentries
+   * @param {Function} chainfunc optional function to call as last op
    */
-  this.listQueuesInMenu = function (popup){
+  this.listQueuesInMenu = function (popup, chainfunc){
     
     
     // 1. get queues 
@@ -569,26 +694,32 @@ function OTRSWatcher(){
       }
       
       let qf = "|"+this.queuefilter+"|";
+      let aFillSubmenus = new Array;
       for each(let queue in queues){
 	if (qf.indexOf("|"+queue.QueueName+"|") == -1){
 	  // create sub submenu
-
+	  let QueueID = queue.QueueID;
 	  let menu = document.createElement("menu");
 	  menu.setAttribute("label", queue.QueueName + "(" + queue.NumberOfTickets + ")");
 	  let submenuPopup = document.createElement("menupopup");
-	  submenuPopup.setAttribute("onpopupshowing", "otrswatcher.listTicketsInQueueOrView(this, 'QueueView', "+queue.QueueID+");");
+	  //submenuPopup.setAttribute("onpopupshowing", "otrswatcher.listTicketsInQueueOrView(this, 'QueueView', "+queue.QueueID+");");
+	  aFillSubmenus.push(function(cb){otrswatcher.listTicketsInQueueOrView(submenuPopup, 'QueueView', QueueID, cb);});
 	  menu.appendChild(submenuPopup);
 	  popup.appendChild(menu);
 
 	}
       }
       
+      if (chainfunc != null){
+	aFillSubmenus.push(chainfunc);
+      }
+      if (aFillSubmenus.length > 0) this.nextChainedFunc(aFillSubmenus);
     };
     
-    if (popup.childNodes.length == 0){
+//    if (popup.childNodes.length == 0){
       this.prepPopup(popup);
       this.doRequestLive(getqueues, "QueueView");
-    }
+//    }
   };
   
   /**
@@ -597,6 +728,7 @@ function OTRSWatcher(){
    * @param {Element} popup a menupopup which will contain copies of the entries in otrsmenue
    */
   this.prepPopup = function (popup){
+    this.zapMenu(popup);
     let range = document.createRange();
     range.selectNodeContents(document.getElementById("otrsmenu"));
     popup.appendChild(range.cloneContents());
@@ -609,14 +741,22 @@ function OTRSWatcher(){
    * @event {Event} event
    */
   this.removeMenuEntries = function (popup, event){
-    
-    if (event.target.id == event.currentTarget.id){
 
-      let range = document.createRange();
-      range.selectNodeContents(popup);
-      range.deleteContents();
-      
+    return;
+    if (event.target.id == event.currentTarget.id){
+      this.zapMenu(popup);
     }
+  };
+
+  /**
+   * Removes all menuentries from popup.
+   * 
+   * @param {Element} popup a menupopup which will gets its entries removed.
+   */
+  this.zapMenu = function (popup){
+    let range = document.createRange();
+    range.selectNodeContents(popup);
+    range.deleteContents();
   };
   
   /**
@@ -688,6 +828,14 @@ function OTRSWatcher(){
       this.register(); 
       this.onloadStatusbar();
   };
+  
+  this.kinds = {"queue":{"view":"QueueView", "count":this.countQueueTickets, "list":this.listQueueTickets},
+		"watched":{"view":"WatchedView", "count":this.countWatchedTickets, "list":this.listWatchedTickets}, 
+		"responsible":{"view":"ResponsibleView", "count":this.countResponsibleTickets, "list":this.listResponsibleTickets}, 
+		"locked":{"view":"LockedView", "count":this.countLockedTickets, "list":this.listLockedTickets}
+	       };
+  
+  
 }
 
 /*

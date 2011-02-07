@@ -15,4 +15,21 @@
 <!ENTITY ow.prefs.onaddons "OTRSAddon">
 <!ENTITY ow.prefs.projecthome "Projektseite">
 <!ENTITY ow.about.license "Lizenz">
-
+<!ENTITY ow.prefs.jsonurl "OTRS json-URL">
+<!ENTITY ow.prefs.username "Benutzername">
+<!ENTITY ow.prefs.password "Password">
+<!ENTITY ow.prefs.testlogin "Login testen!">
+<!ENTITY ow.prefs.bgcolor "Hintergrundfarbe">
+<!ENTITY ow.prefs.bgcolor.queue "Queues">
+<!ENTITY ow.prefs.bgcolor.watched "beobachtete">
+<!ENTITY ow.prefs.bgcolor.responsible "verantwortliche">
+<!ENTITY ow.prefs.bgcolor.locked "gesperrte">
+<!ENTITY ow.prefs.example "Bsp.:">
+<!ENTITY ow.prefs.checkintervall_in_minutes "Checkintervall in Minuten:">
+<!ENTITY ow.prefs.ignore_queues "ignoriere Queues:">
+<!ENTITY ow.prefs.request_queues "meine Queues abfragen">
+<!ENTITY ow.prefs.max_entries_per_menu "max. Einträge pro Menü:">
+<!ENTITY ow.tt.queue "Queues">
+<!ENTITY ow.tt.watched "beobachtete">
+<!ENTITY ow.tt.responsible "verantwortliche">
+<!ENTITY ow.tt.locked "gesperrte">

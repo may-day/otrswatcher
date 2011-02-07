@@ -5,3 +5,8 @@
   margin:0;
   border: 1px solid ThreeDShadow;
 }
+
+.tightlabel {
+  margin-left:0;
+  margin-right:0;
+}

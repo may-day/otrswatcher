@@ -9,6 +9,11 @@
   <script type="application/x-javascript"
 	  src="chrome://otrswatcher/content/otrswatcher-options.js"/>
 
+  <stringbundleset id="stringbundleset">
+        <stringbundle id="string-bundle" src="chrome://otrswatcher/locale/otrswatcher.properties"/>
+  </stringbundleset>
+
+
   <script type="application/x-javascript">
     var otrswatcher = new OTRSWatcher().init();
     window.addEventListener("load", function(event){otrswatcher.overlayInit(event);}, false);
@@ -31,16 +36,23 @@
 
     <statusbarpanel	label="&ow.panel.loading;" context="otrsmenu">
       <hbox id="otrswatcherbox">
-	<label id="daslabel" value="otrs: " />
-	<tooltip id="otrswatcher.queue.tooltip" orient="vertical" style="background-color: #33DD00;" label="queue" />
-	<tooltip id="otrswatcher.watched.tooltip" orient="vertical" style="background-color: #33DD00;" label="watched" />
-	<tooltip id="otrswatcher.responsible.tooltip" orient="vertical" style="background-color: #33DD00;" label="responsible" />
-	<tooltip id="otrswatcher.locked.tooltip" orient="vertical" style="background-color: #33DD00;" label="locked" />
+	<image
+         id="loaderimg"
+         alt="o"
+	 hidden="true"
+         style="width:12px;height:8px;margin-left:0px;margin-right:0px;"
+         />
+	<label id="das-o" value="o" class="tightlabel"/><label id="daslabel" class="tightlabel" value="trs: " />
 
-	<menupopup id="queue.popup" onpopupshowing="otrswatcher.listQueuesInMenu(this);" onpopuphidden="otrswatcher.removeMenuEntries(this, event);" />
-	<menupopup id="locked.popup" onpopupshowing="otrswatcher.listTicketsInQueueOrView(this, 'LockedView');" onpopuphidden="otrswatcher.removeMenuEntries(this, event);" />
-	<menupopup id="watched.popup" onpopupshowing="otrswatcher.listTicketsInQueueOrView(this, 'WatchedView');" onpopuphidden="otrswatcher.removeMenuEntries(this, event);" />
-	<menupopup id="responsible.popup" onpopupshowing="otrswatcher.listTicketsInQueueOrView(this, 'ResponsibleView');" onpopuphidden="otrswatcher.removeMenuEntries(this, event);" />
+	<tooltip id="otrswatcher.queue.tooltip" orient="vertical" style="background-color: #33DD00;" label="&ow.tt.queue;" />
+	<tooltip id="otrswatcher.watched.tooltip" orient="vertical" style="background-color: #33DD00;" label="&ow.tt.watched;" />
+	<tooltip id="otrswatcher.responsible.tooltip" orient="vertical" style="background-color: #33DD00;" label="&ow.tt.responsible;" />
+	<tooltip id="otrswatcher.locked.tooltip" orient="vertical" style="background-color: #33DD00;" label="&ow.tt.locked;" />
+
+	<menupopup id="queue.popup" />
+	<menupopup id="locked.popup" />
+	<menupopup id="watched.popup" />
+	<menupopup id="responsible.popup" />
 
 	<hbox id="otrswatchercolumns">
 	  <label id="otrswatcher.queue" value="?" tooltip="otrswatcher.queue.tooltip" context="queue.popup"/>

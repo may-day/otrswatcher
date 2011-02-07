@@ -4,6 +4,20 @@
 <!ENTITY ow.prefs.display "Display">
 <!ENTITY ow.prefs.whatandhow "What&amp;How">
 <!ENTITY ow.prefs.about "About">
+<!ENTITY ow.prefs.jsonurl "OTRS json-URL">
+<!ENTITY ow.prefs.username "username">
+<!ENTITY ow.prefs.password "password">
+<!ENTITY ow.prefs.testlogin "test login">
+<!ENTITY ow.prefs.bgcolor "background color">
+<!ENTITY ow.prefs.bgcolor.queue "queue">
+<!ENTITY ow.prefs.bgcolor.watched "watched">
+<!ENTITY ow.prefs.bgcolor.responsible "responsible">
+<!ENTITY ow.prefs.bgcolor.locked "locked">
+<!ENTITY ow.prefs.example "e.g.:">
+<!ENTITY ow.prefs.checkintervall_in_minutes "checkinterval in minutes:">
+<!ENTITY ow.prefs.ignore_queues "ignore queues:">
+<!ENTITY ow.prefs.request_queues "request my queues">
+<!ENTITY ow.prefs.max_entries_per_menu "max. entries per menu:">
 <!ENTITY ow.menu.options.label "otrswatcher settings">
 <!ENTITY ow.menu.otrs.label "open OTRS">
 <!ENTITY ow.panel.loading "Loading...">
@@ -15,3 +29,46 @@
 <!ENTITY ow.prefs.onaddons "OTRSAddon">
 <!ENTITY ow.prefs.projecthome "Projectpages">
 <!ENTITY ow.about.license "License">
+<!ENTITY ow.tt.queue "queue">
+<!ENTITY ow.tt.watched "watched">
+<!ENTITY ow.tt.responsible "responsible">
+<!ENTITY ow.tt.locked "locked">
+
+<!--
+<!ENTITY ow.title "-">
+<!ENTITY ow.prefs.title "-">
+<!ENTITY ow.prefs.otrsaccess "-">
+<!ENTITY ow.prefs.display "-">
+<!ENTITY ow.prefs.whatandhow "-">
+<!ENTITY ow.prefs.about "-">
+<!ENTITY ow.menu.options.label "-">
+<!ENTITY ow.menu.otrs.label "-">
+<!ENTITY ow.panel.loading "-">
+<!ENTITY ow.about.version "-">
+<!ENTITY ow.about.description "-">
+<!ENTITY ow.about.created "-">
+<!ENTITY ow.about.author "-">
+<!ENTITY ow.about.homepage "-">
+<!ENTITY ow.prefs.onaddons "-">
+<!ENTITY ow.prefs.projecthome "-">
+<!ENTITY ow.about.license "-">
+<!ENTITY ow.prefs.jsonurl "-">
+<!ENTITY ow.prefs.username "-">
+<!ENTITY ow.prefs.password "-">
+<!ENTITY ow.prefs.testlogin "-">
+<!ENTITY ow.prefs.bgcolor "-">
+<!ENTITY ow.prefs.bgcolor.queue "-">
+<!ENTITY ow.prefs.bgcolor.watched "-">
+<!ENTITY ow.prefs.bgcolor.responsible "-">
+<!ENTITY ow.prefs.bgcolor.locked "-">
+<!ENTITY ow.prefs.example "-">
+<!ENTITY ow.prefs.checkintervall_in_minutes "-">
+<!ENTITY ow.prefs.ignore_queues "-">
+<!ENTITY ow.prefs.request_queues "-">
+<!ENTITY ow.prefs.max_entries_per_menu "-">
+<!ENTITY ow.tt.queue "-">
+<!ENTITY ow.tt.watched "-">
+<!ENTITY ow.tt.responsible "-">
+<!ENTITY ow.tt.locked "-">
+
+-->

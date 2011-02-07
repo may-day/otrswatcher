@@ -17,5 +17,27 @@ Keeping an eye on the numbers in the statusbar seemed more convenient.
 How
 ---
 
-This plugin simply uses the services that are provided by the iPhoneBundle.
+This plugin simply uses the services that are provided by the iPhoneHandle.
 So you need that installed on your OTRS site.
+
+
+Clientside
+----------
+
+I only test it against my current setup. 
+That is Firefox 3.6.
+
+Serverside
+----------
+
+You need an account to an otrs backend!
+Your otrs needs the iPhoneHandle package installed.
+Currently i only tested it against otrs 2.4.9 with iPhoneHandle 0.9.6.
+
+
+All by myself?
+--------------
+Ha, certainly not!
+I read a bit nagioschecker's code.
+Also the stockwatcher sample on mozilla's developer site was quite helpful.
+All bugs are mine of course.
