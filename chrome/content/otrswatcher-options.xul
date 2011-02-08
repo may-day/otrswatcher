@@ -81,24 +81,20 @@
 	    </columns>
 	    <rows>
 	      <row>
-		<label value="&ow.prefs.bgcolor.queue;"/>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="queue"/>
-		  <checkbox id="queue.check" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><checkbox id="queue.check" label="&ow.prefs.bgcolor.queue;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="queue"/></hbox>
 	      </row>
 	      <row>
-		<label value="&ow.prefs.bgcolor.watched;"/>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="watched"/>
-		  <checkbox id="watched.check" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><checkbox id="watched.check" label="&ow.prefs.bgcolor.watched;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="watched"/></hbox>
 	      </row>
 	      <row>
-		<label value="&ow.prefs.bgcolor.responsible;"/>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="responsible"/>
-		  <checkbox id="responsible.check" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><checkbox id="responsible.check" label="&ow.prefs.bgcolor.responsible;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="responsible"/></hbox>
 	      </row>
 	      <row>
-		<label value="&ow.prefs.bgcolor.locked;"/>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="locked" />
-		  <checkbox id="locked.check" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><checkbox id="locked.check" label="&ow.prefs.bgcolor.locked;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="locked" /></hbox>
 	      </row>
 	    </rows>
 	  </grid>
@@ -122,15 +118,15 @@
 	  <hbox>
 	    <label control="queuefilter" value="&ow.prefs.ignore_queues;"/>
 	    <textbox size="30" id="queuefilter" value="" />
-	    <button label="&ow.prefs.request_queues;" oncommand="otrswatcher.dispMyQueues();"/>
 	  </hbox>
 	  <hbox>
-	    <textbox size="60" placeholder="meine Queues" id="myqueues" value="" readonly="true" />
+	    <button label="&ow.prefs.request_queues;" oncommand="otrswatcher.dispMyQueues();"/><textbox size="30" placeholder="meine Queues" id="myqueues" value="" readonly="true" />
 	  </hbox>
 	  <hbox>
 	    <label control="entriespermenu" value="&ow.prefs.max_entries_per_menu;"/>
 	    <textbox type="number" size="2" id="entriespermenu" value="10" min="1" />
 	  </hbox>
+	  <hbox><checkbox id="smoothemptyresponse" label="&ow.prefs.ignore_empty_response;" checked="true"/></hbox>
 	</vbox>
 
 

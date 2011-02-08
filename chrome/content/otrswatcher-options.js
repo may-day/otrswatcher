@@ -2,9 +2,10 @@ function OTRSWatcher(){
   this.username = "";
   this.password = "";
   this.otrsjsonurl = "";
-  this.timerid = null;
+  this.timer = null;
   this.entriespermenu=10;
-
+  this.smoothemptyresponse=true;
+  
   this.optprefix = "extensions.otrswatcher";
   this.MY_EXTENSION_UUID = "otrswatcher@kraemer.norman.at.googlemail.com";
 
@@ -13,7 +14,8 @@ function OTRSWatcher(){
     ["checkintervall", "checkintervall", "int", "checkintervall"],
     ["entriespermenu", "entriespermenu", "int", "entriespermenu"],
     ["queuefilter", "queuefilter", "char", "queuefilter"],
-    ["otrsjsonurl", "otrsjsonurl", "char", "otrsjsonurl"]
+    ["otrsjsonurl", "otrsjsonurl", "char", "otrsjsonurl"],
+    ["smoothemptyresponse", "smoothemptyresponse", "bool", "smoothemptyresponse"]
   ];
   
 
@@ -74,6 +76,7 @@ function OTRSWatcher(){
       try{
 	callback.apply(this, [what, which, accessfunc[preftype](which), elementid]);
       } catch (x) {
+	dump("error at "+what+":"+x+"\n");
       }
     }
     
@@ -115,7 +118,7 @@ function OTRSWatcher(){
       if (what == "color")
 	value=document.getElementById(elementid).color;
       else{
-	if (what == "check")
+	if (preftype == "bool")
 	  value=document.getElementById(elementid).checked;
 	else
 	  value=document.getElementById(elementid).value;
@@ -199,6 +202,8 @@ function OTRSWatcher(){
       var el=document.getElementById(elementid);
       if(what == "check"){ 
 	el.checked=value; this.showExample(el);
+      }else if(what == "smoothemptyresponse"){
+	el.checked=value;
       }
       else if (value != ""){
 	el.value = value;
@@ -218,8 +223,9 @@ function OTRSWatcher(){
    */
   this.onloadStatusbar = function (){
     this.loadPref(function (what, which, value, elementid){
-		    if(value != ""){
+		    if(value != null){
 		      this[which] = value;
+		      //dump("setting "+which+" to:"+value+"\n");
 		    }
 		    if(what == "check"){
 		      var el=document.getElementById("otrswatcher."+(elementid.split(".")[0]));
@@ -377,9 +383,13 @@ function OTRSWatcher(){
     if (!isNaN(this.checkintervall)){
       let milli = this.checkintervall * 60 * 1000;
       let ow = this;
-      this.timerid = window.setInterval(function(){ ow.checkTickets(); }, milli);
+      if (this.timer == null){
+	this.timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
+      }
+      this.timer.initWithCallback(this, milli, Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
+      //this.timerid = window.setInterval(function(){ ow.checkTickets(); }, milli);
       // and check tickets immediate
-      this.checkTickets();
+      this.notify(this.timer);
     }
   };
   
@@ -387,9 +397,8 @@ function OTRSWatcher(){
    * Uninstalls the times to check for new/changed tickets.
    */
   this.uninstallTimer= function (){
-    if (this.timerid != null)
-      window.clearTimeout(this.timerid);
-    this.timerid=null;
+    if (this.timer != null)
+      this.timer.cancel();
   };
 
   
@@ -436,10 +445,13 @@ function OTRSWatcher(){
         tttext = stringsBundle.getString('response_was_empty');
       }
       
-      label.value=count;
-      label.style.backgroundColor = bgcolor;
-      let tooltip=document.getElementById("otrswatcher."+kind+".tooltip");
-      tooltip.label=tttext;
+      if (responseText != "" || !this.smoothemptyresponse){
+	label.value=count;
+	label.style.backgroundColor = bgcolor;
+	let tooltip=document.getElementById("otrswatcher."+kind+".tooltip");
+	tooltip.label=tttext;
+      }
+      
       if (chainfunc != null) chainfunc.apply(this);
     };
 
@@ -515,7 +527,7 @@ function OTRSWatcher(){
   /**
    * Initiate requesting all ticket counts. this is called from the installed timer.
    */
-  this.checkTickets=function (){
+  this.notify=function (timer){
     //alert("checktickets this="+this);
     let funcs = new Array;
     funcs.push(this.showLoadingIcon);
@@ -653,18 +665,15 @@ function OTRSWatcher(){
 	chainfunc.apply(this);
     };
 
-//    if (popup.childNodes.length == 0){
+    let prop1="Filter";
+    if (method=="QueueView"){
+      prop1 = '"QueueID":'+QueueID;
+    }else{
+      this.prepPopup(popup);
+      prop1 = '"Filter":"All"';
+    }
       
-      let prop1="Filter";
-      if (method=="QueueView"){
-	prop1 = '"QueueID":'+QueueID;
-      }else{
-	this.prepPopup(popup);
-	prop1 = '"Filter":"All"';
-      }
-      
-      this.doRequestLive(gettickets, method, '{' + prop1 +', "Limit":'+this.entriespermenu+'}');
-//    }
+    this.doRequestLive(gettickets, method, '{' + prop1 +', "Limit":'+this.entriespermenu+'}');
 
   };
 
@@ -678,7 +687,7 @@ function OTRSWatcher(){
     
     // 1. get queues 
     // 2. filter out disliked queues
-    // 3. for every remaining queue get a list of max 10 entries and build a menupopup containing sender and subject for every entry
+    // 3. for every remaining queue get a list the max of entries per menu (from pref) and build a menupopup containing sender and subject for every entry
     // 4. insert those built menupopups as submenue in <popup>
     
     
@@ -716,10 +725,8 @@ function OTRSWatcher(){
       if (aFillSubmenus.length > 0) this.nextChainedFunc(aFillSubmenus);
     };
     
-//    if (popup.childNodes.length == 0){
-      this.prepPopup(popup);
-      this.doRequestLive(getqueues, "QueueView");
-//    }
+    this.prepPopup(popup);
+    this.doRequestLive(getqueues, "QueueView");
   };
   
   /**

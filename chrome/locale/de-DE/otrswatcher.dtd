@@ -29,6 +29,7 @@
 <!ENTITY ow.prefs.ignore_queues "ignoriere Queues:">
 <!ENTITY ow.prefs.request_queues "meine Queues abfragen">
 <!ENTITY ow.prefs.max_entries_per_menu "max. Einträge pro Menü:">
+<!ENTITY ow.prefs.ignore_empty_response "ignoriere leeren responseText">
 <!ENTITY ow.tt.queue "Queues">
 <!ENTITY ow.tt.watched "beobachtete">
 <!ENTITY ow.tt.responsible "verantwortliche">

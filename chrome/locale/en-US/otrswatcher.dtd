@@ -18,6 +18,7 @@
 <!ENTITY ow.prefs.ignore_queues "ignore queues:">
 <!ENTITY ow.prefs.request_queues "request my queues">
 <!ENTITY ow.prefs.max_entries_per_menu "max. entries per menu:">
+<!ENTITY ow.prefs.ignore_empty_response "ignore empty responseText">
 <!ENTITY ow.menu.options.label "otrswatcher settings">
 <!ENTITY ow.menu.otrs.label "open OTRS">
 <!ENTITY ow.panel.loading "Loading...">
