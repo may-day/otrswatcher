@@ -1,4 +1,5 @@
 function OTRSWatcher(){
+  this.loaded = false;
   this.username = "";
   this.password = "";
   this.otrsjsonurl = "";
@@ -61,8 +62,9 @@ function OTRSWatcher(){
    * Load the pref settings and hand it to a callback.
    * 
    * @param {Function} callback get called for every value read from the pref system
+   * @param {String} prefname, optionally a prefname (like watched.check) then only that pref will be loaded
    */
-  this.loadPref = function (callback) {
+  this.loadPref = function (callback, prefname) {
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].
       getService(Components.interfaces.nsIPrefService).getBranch(this.optprefix+".");
     
@@ -73,10 +75,12 @@ function OTRSWatcher(){
     };
     
     for each(let [what,which,preftype, elementid] in this.prefvars){
-      try{
-	callback.apply(this, [what, which, accessfunc[preftype](which), elementid]);
-      } catch (x) {
-	dump("error at "+what+":"+x+"\n");
+      if (prefname == null || which == prefname){
+	try{
+	  callback.apply(this, [what, which, accessfunc[preftype](which), elementid]);
+	} catch (x) {
+	  //dump("error at "+what+":"+x+"\n");
+	}
       }
     }
     
@@ -99,6 +103,11 @@ function OTRSWatcher(){
    * Read values from the options dialog and store them in the preference system.
    */
   this.savePref = function () {
+
+    let username=document.getElementById("username").value;
+    let password=document.getElementById("password").value;
+    this.userPass(username, password);
+
     let prefs = Components.classes["@mozilla.org/preferences-service;1"].
       getService(Components.interfaces.nsIPrefService).getBranch(this.optprefix+".");
     /*
@@ -126,10 +135,7 @@ function OTRSWatcher(){
       accessfunc[preftype](which, value);
     }
   
-    let username=document.getElementById("username").value;
-    let password=document.getElementById("password").value;
-    this.userPass(username, password);
-  
+ 
   };
   
   /**
@@ -219,25 +225,41 @@ function OTRSWatcher(){
 
 
   /**
-   * The method called on the "load" event of this extensions overlay.
+   * For the statusbar we use this method to react to changes in the preferences.
+   * It's what will be handed to loadPref as callback.
+   * 
+   * @param {String} what, what it's about
+   * @param {String} which, name in the pref system (without the extensions.otrswatcher. prefix)
+   * @param {varying} value, the value of the pref entry
+   * @param {String} elementid, the corresponding elementid in the options dialog
    */
-  this.onloadStatusbar = function (){
-    this.loadPref(function (what, which, value, elementid){
-		    if(value != null){
-		      this[which] = value;
-		      //dump("setting "+which+" to:"+value+"\n");
-		    }
-		    if(what == "check"){
-		      var el=document.getElementById("otrswatcher."+(elementid.split(".")[0]));
-		      el.hidden = !value;
-		    }
-		    
-		  });
-		  
-    this.installTimer();
-    
+  this.statusbarPrefLoadingFunc = function (what, which, value, elementid){
+    //dump("loading pref " + what + "=" + value+"\n");
+    if(value != null){
+      this[which] = value;
+    }
+    if(what == "check"){
+      var el=document.getElementById("otrswatcher."+(elementid.split(".")[0]));
+      el.hidden = !value;
+      if (value){
+	this.notify(this.timer, which.split(".")[0]);
+      }
+    }
+    if(what == "checkintervall"){
+      this.installTimer();
+    }
   };
   
+  
+  /**
+   * The method called on the "load" event of this extensions overlay.
+   */
+  this.onloadStatusbar = function (what, event){
+    this.loadPref(this.statusbarPrefLoadingFunc);
+    this.loaded = true;
+    this.notify(this.timer);
+  };
+
   /**
    * We setup and execute a request to the otrs site.
    * @param {String} url The json.pl url to call.
@@ -387,9 +409,6 @@ function OTRSWatcher(){
 	this.timer = Components.classes["@mozilla.org/timer;1"].createInstance(Components.interfaces.nsITimer);
       }
       this.timer.initWithCallback(this, milli, Components.interfaces.nsITimer.TYPE_REPEATING_SLACK);
-      //this.timerid = window.setInterval(function(){ ow.checkTickets(); }, milli);
-      // and check tickets immediate
-      this.notify(this.timer);
     }
   };
   
@@ -397,8 +416,10 @@ function OTRSWatcher(){
    * Uninstalls the times to check for new/changed tickets.
    */
   this.uninstallTimer= function (){
-    if (this.timer != null)
+    if (this.timer != null){
       this.timer.cancel();
+      this.timer = null;
+    }
   };
 
   
@@ -526,24 +547,30 @@ function OTRSWatcher(){
   
   /**
    * Initiate requesting all ticket counts. this is called from the installed timer.
+   * 
+   * @param {Timer} timer timerid
+   * @param {String} singlekind, if given the otrs requests are made only for the requested kind
    */
-  this.notify=function (timer){
+  this.notify=function (timer, singlekind){
     //alert("checktickets this="+this);
-    let funcs = new Array;
-    funcs.push(this.showLoadingIcon);
-    this.forEveryKind(
-      function(kind){
-	if (this[kind+".check"] != false){
-	  funcs.push(this.countOfKind(kind));
-	  funcs.push(this.listOfKind(kind));
-	}
+    if (timer != null && this.loaded){
+      
+      let funcs = new Array;
+      funcs.push(this.showLoadingIcon);
+      this.forEveryKind(
+        function(kind){
+	  if (this[kind+".check"] != false && (singlekind == null || kind == singlekind)){
+	    funcs.push(this.countOfKind(kind));
+  	    funcs.push(this.listOfKind(kind));
+	  }
+        }
+      );
+      funcs.push(this.removeLoadingIcon);
+      // if we have more than 2 functions (the icon loading/removing functions)
+      // then we start the batch
+      if (funcs.length>2)
+        this.nextChainedFunc(funcs);
       }
-    );
-    funcs.push(this.removeLoadingIcon);
-    // if we have more than 2 functions (the icon loading/removing functions)
-    // then we start the batch
-    if (funcs.length>2)
-      this.nextChainedFunc(funcs);
   };
   
   /**
@@ -606,7 +633,7 @@ function OTRSWatcher(){
    * Show throbbing icon
    */
   this.showLoadingIcon = function(chainfunc){
-    document.getElementById("loaderimg").setAttribute("src", "chrome://otrswatcher/skin/Throbber.gif");
+    document.getElementById("loaderimg").setAttribute("src", "chrome://otrswatcher/skin/throbber.gif");
     document.getElementById("das-o").hidden=true;
     document.getElementById("loaderimg").hidden=false;
     if (chainfunc != null) chainfunc.apply(this);
@@ -806,6 +833,10 @@ function OTRSWatcher(){
 	
       }
       this.unregister();
+    } else if (topic == "nsPref:changed") {
+      this.loadPref(this.statusbarPrefLoadingFunc, data);
+      
+      //dump("subject="+subject + ", topic=" + topic + ", data="+ data+"\n");
     }
   };
   
@@ -816,6 +847,13 @@ function OTRSWatcher(){
 
     observerService.addObserver(this, "em-action-requested", false);
     observerService.addObserver(this, "quit-application-granted", false);
+    
+    this.prefs = Components.classes["@mozilla.org/preferences-service;1"].
+      getService(Components.interfaces.nsIPrefService).getBranch(this.optprefix+".");
+    
+    this.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
+    this.prefs.addObserver("", this, false);
+    
   };
   
   this.unregister = function() {
@@ -825,6 +863,14 @@ function OTRSWatcher(){
 
     observerService.removeObserver(this,"em-action-requested");
     observerService.removeObserver(this,"quit-application-granted");
+
+    /*    
+    let prefs = Components.classes["@mozilla.org/preferences-service;1"].
+      getService(Components.interfaces.nsIPrefService).getBranch(this.optprefix+".");
+    
+    prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
+*/
+    this.prefs.removeObserver("", this);
   };
   
   

@@ -28,7 +28,7 @@
     <popupset>
       <popup id="otrsmenu" position="after_start">
 	<menuitem label="&ow.menu.options.label;" 
-		  oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); win.addEventListener('unload', function(){ otrswatcher.onloadStatusbar(); }, false); win.focus();"/>
+		  oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); /* win.addEventListener('unload', function(){ otrswatcher.onloadStatusbar('palim', event); }, false); */ win.focus();"/>
 	<menuitem label="&ow.menu.otrs.label;" oncommand="otrswatcher.openOTRS();"/>
 	<menuseparator/>
       </popup>
@@ -40,7 +40,7 @@
          id="loaderimg"
          alt="o"
 	 hidden="true"
-         style="width:12px;height:8px;margin-left:0px;margin-right:0px;"
+         style="margin-left:0px;margin-right:0px;"
          />
 	<label id="das-o" value="o" class="tightlabel"/><label id="daslabel" class="tightlabel" value="trs: " />
 

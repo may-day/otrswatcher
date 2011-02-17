@@ -13,7 +13,7 @@
 	title="&ow.prefs.title;"
 	
 	buttons="accept,cancel"
-	ondialogaccept="otrswatcher.savePref();">
+	ondialogaccept="owa.savePref();">
 
   <script type="application/x-javascript" src="chrome://otrswatcher/content/otrswatcher-options.js" />
 
@@ -22,8 +22,8 @@
   </stringbundleset>
 
   <script>
-    var otrswatcher = new OTRSWatcher().init();
-    window.addEventListener("load", function(){otrswatcher.onloadSettings();}, false);
+    var owa = new OTRSWatcher().init();
+    window.addEventListener("load", function(){owa.onloadSettings();}, false);
   </script>
 
   <stringbundleset id="stringbundleset">
@@ -49,20 +49,20 @@
 	  <rows>
 	    <row>
 	      <label control="otrsjsonurl" value="&ow.prefs.jsonurl;"/>
-	      <textbox id="otrsjsonurl" value="https://support.your-company.com/otrs/json.pl" size="45" onchange="otrswatcher.clearTestResult();"/>
+	      <textbox id="otrsjsonurl" value="https://support.your-company.com/otrs/json.pl" size="45" onchange="owa.clearTestResult();"/>
 	    </row>
 	    <row>
 	      <label control="username" value="&ow.prefs.username;"/>
-	      <textbox id="username" value=""  onchange="otrswatcher.clearTestResult();"/>
+	      <textbox id="username" value=""  onchange="owa.clearTestResult();"/>
 	    </row>
 	    <row>
 	      <label control="password" value="&ow.prefs.password;"/>
-	      <textbox id="password" value=""  type="password"  onchange="otrswatcher.clearTestResult();"/>
+	      <textbox id="password" value=""  type="password"  onchange="owa.clearTestResult();"/>
 	    </row>
 	 </rows>
 	</grid>
       <vbox>
-      <button label="&ow.prefs.testlogin;" oncommand="otrswatcher.testLogin();"/>
+      <button label="&ow.prefs.testlogin;" oncommand="owa.testLogin();"/>
       </vbox>
       </hbox>
       <label id="accesstest" value="" crop="end"/>
@@ -81,20 +81,20 @@
 	    </columns>
 	    <rows>
 	      <row>
-		<hbox><checkbox id="queue.check" label="&ow.prefs.bgcolor.queue;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="queue"/></hbox>
+		<hbox><checkbox id="queue.check" label="&ow.prefs.bgcolor.queue;" oncommand="owa.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="owa.changeColorOnExample(this);" id="queue"/></hbox>
 	      </row>
 	      <row>
-		<hbox><checkbox id="watched.check" label="&ow.prefs.bgcolor.watched;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="watched"/></hbox>
+		<hbox><checkbox id="watched.check" label="&ow.prefs.bgcolor.watched;" oncommand="owa.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="owa.changeColorOnExample(this);" id="watched"/></hbox>
 	      </row>
 	      <row>
-		<hbox><checkbox id="responsible.check" label="&ow.prefs.bgcolor.responsible;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="responsible"/></hbox>
+		<hbox><checkbox id="responsible.check" label="&ow.prefs.bgcolor.responsible;" oncommand="owa.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="owa.changeColorOnExample(this);" id="responsible"/></hbox>
 	      </row>
 	      <row>
-		<hbox><checkbox id="locked.check" label="&ow.prefs.bgcolor.locked;" oncommand="otrswatcher.showExample(this);" checked="true"/></hbox>
-		<hbox><colorpicker type="button" onchange="otrswatcher.changeColorOnExample(this);" id="locked" /></hbox>
+		<hbox><checkbox id="locked.check" label="&ow.prefs.bgcolor.locked;" oncommand="owa.showExample(this);" checked="true"/></hbox>
+		<hbox><colorpicker type="button" onchange="owa.changeColorOnExample(this);" id="locked" /></hbox>
 	      </row>
 	    </rows>
 	  </grid>
@@ -120,7 +120,7 @@
 	    <textbox size="30" id="queuefilter" value="" />
 	  </hbox>
 	  <hbox>
-	    <button label="&ow.prefs.request_queues;" oncommand="otrswatcher.dispMyQueues();"/><textbox size="30" placeholder="meine Queues" id="myqueues" value="" readonly="true" />
+	    <button label="&ow.prefs.request_queues;" oncommand="owa.dispMyQueues();"/><textbox size="30" placeholder="meine Queues" id="myqueues" value="" readonly="true" />
 	  </hbox>
 	  <hbox>
 	    <label control="entriespermenu" value="&ow.prefs.max_entries_per_menu;"/>
@@ -136,7 +136,7 @@
 
 	<vbox>
 	  <description>&ow.about.description;</description>
-	  <description>&ow.about.version; <label value="0.3"/></description>
+	  <description>&ow.about.version; <label value="0.4"/></description>
   	  <description>&ow.about.author;</description>
     	  <description>Mozilla Public License 1.1</description>
 	</vbox>

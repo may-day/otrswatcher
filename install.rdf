@@ -6,7 +6,7 @@
   <Description about="urn:mozilla:install-manifest">
 
     <em:id>otrswatcher@kraemer.norman.at.googlemail.com</em:id>
-    <em:version>0.3</em:version>
+    <em:version>0.4</em:version>
     <em:type>2</em:type>
     
     <em:optionsURL>chrome://otrswatcher/content/options.xul</em:optionsURL>
@@ -23,7 +23,7 @@
       <Description>
         <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
         <em:minVersion>3.5</em:minVersion>
-        <em:maxVersion>4.0</em:maxVersion>
+        <em:maxVersion>3.6.*</em:maxVersion>
       </Description>
     </em:targetApplication>
 
