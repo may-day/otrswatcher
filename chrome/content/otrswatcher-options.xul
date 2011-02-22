@@ -145,7 +145,7 @@
 
 	<vbox>
 	  <description>&ow.about.description;</description>
-	  <description>&ow.about.version; <label value="0.4"/></description>
+	  <description>&ow.about.version; <label value="0.5"/></description>
   	  <description>&ow.about.author;</description>
     	  <description>Mozilla Public License 1.1</description>
 	</vbox>
