@@ -28,7 +28,7 @@
     <popupset>
       <popup id="otrsmenu" position="after_start">
 	<menuitem label="&ow.menu.options.label;" 
-		  oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable'); /* win.addEventListener('unload', function(){ otrswatcher.onloadStatusbar('palim', event); }, false); */ win.focus();"/>
+		  oncommand="win=openDialog('chrome://otrswatcher/content/otrswatcher-options.xul','otrswatcher-options','centerscreen,dialog,chrome,dependent,resizable', {otrsw: otrswatcher}); /* win.addEventListener('unload', function(){ otrswatcher.onloadStatusbar('palim', event); }, false); */ win.focus();"/>
 	<menuitem label="&ow.menu.otrs.label;" oncommand="otrswatcher.openOTRS();"/>
 	<menuseparator/>
       </popup>

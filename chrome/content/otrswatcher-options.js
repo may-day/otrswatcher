@@ -103,7 +103,7 @@ function OTRSWatcher(){
    * Read values from the options dialog and store them in the preference system.
    */
   this.savePref = function () {
-
+    
     let username=document.getElementById("username").value;
     let password=document.getElementById("password").value;
     this.userPass(username, password);

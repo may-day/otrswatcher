@@ -13,7 +13,7 @@
 	title="&ow.prefs.title;"
 	
 	buttons="accept,cancel"
-	ondialogaccept="owa.savePref();">
+	ondialogaccept="otrswatcher.loaded=false; owa.savePref(); otrswatcher.onloadStatusbar();">
 
   <script type="application/x-javascript" src="chrome://otrswatcher/content/otrswatcher-options.js" />
 
@@ -23,7 +23,16 @@
 
   <script>
     var owa = new OTRSWatcher().init();
-    window.addEventListener("load", function(){owa.onloadSettings();}, false);
+    var otrswatcher = "otrswatcher_placeholder";
+    var onload = function(){
+      if("arguments" in window){
+        if (window.arguments.length > 0) {
+           otrswatcher=window.arguments[0].otrsw;
+        }
+      }
+      owa.onloadSettings(); 
+    };
+    window.addEventListener("load", onload, false);
   </script>
 
   <stringbundleset id="stringbundleset">
