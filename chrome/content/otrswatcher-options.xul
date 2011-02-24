@@ -23,7 +23,7 @@
 
   <script>
     var owa = new OTRSWatcher().init();
-    var otrswatcher = "otrswatcher_placeholder";
+    var otrswatcher = {"loaded":true, "onloadStatusbar":function(){}};
     var onload = function(){
       if("arguments" in window){
         if (window.arguments.length > 0) {
