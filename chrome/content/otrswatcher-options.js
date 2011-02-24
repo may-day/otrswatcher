@@ -245,6 +245,13 @@ function OTRSWatcher(){
 	this.notify(this.timer, which.split(".")[0]);
       }
     }
+    else if (what == "color"){
+      let el=document.getElementById("otrswatcher."+(elementid.split(".")[0]));
+      let count = parseInt(el.value, 10);
+      if (!isNaN(count) && count>0){
+	el.style.backgroundColor = value;
+      }
+    }
     if(what == "checkintervall"){
       this.installTimer();
     }
