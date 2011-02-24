@@ -9,13 +9,14 @@
     <em:version>0.5</em:version>
     <em:type>2</em:type>
     
-    <em:optionsURL>chrome://otrswatcher/content/options.xul</em:optionsURL>
+    <em:optionsURL>chrome://otrswatcher/content/otrswatcher-options.xul</em:optionsURL>
     
 	<!-- Front End Metadata -->
 
     <em:name>OTRS Watcher</em:name>
-    <em:description>Display amount of locked/watched/resp./queue entries</em:description>
+    <em:description>Display amount of locked/watched/responsible/queue entries</em:description>
     <em:creator>Norman Krämer</em:creator>
+    <em:homepageURL>https://github.com/may-day/otrswatcher</em:homepageURL>
 
     <!-- Describe the Firefox versions we support -->
 
