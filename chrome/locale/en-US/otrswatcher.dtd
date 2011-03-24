@@ -27,6 +27,7 @@
 <!ENTITY ow.about.created "Author">
 <!ENTITY ow.about.author "Norman Krämer">
 <!ENTITY ow.about.homepage "Homepage">
+<!ENTITY ow.about.projectsite "Project:">
 <!ENTITY ow.prefs.onaddons "OTRSAddon">
 <!ENTITY ow.prefs.projecthome "Projectpages">
 <!ENTITY ow.about.license "License">
@@ -34,42 +35,3 @@
 <!ENTITY ow.tt.watched "watched">
 <!ENTITY ow.tt.responsible "responsible">
 <!ENTITY ow.tt.locked "locked">
-
-<!--
-<!ENTITY ow.title "-">
-<!ENTITY ow.prefs.title "-">
-<!ENTITY ow.prefs.otrsaccess "-">
-<!ENTITY ow.prefs.display "-">
-<!ENTITY ow.prefs.whatandhow "-">
-<!ENTITY ow.prefs.about "-">
-<!ENTITY ow.menu.options.label "-">
-<!ENTITY ow.menu.otrs.label "-">
-<!ENTITY ow.panel.loading "-">
-<!ENTITY ow.about.version "-">
-<!ENTITY ow.about.description "-">
-<!ENTITY ow.about.created "-">
-<!ENTITY ow.about.author "-">
-<!ENTITY ow.about.homepage "-">
-<!ENTITY ow.prefs.onaddons "-">
-<!ENTITY ow.prefs.projecthome "-">
-<!ENTITY ow.about.license "-">
-<!ENTITY ow.prefs.jsonurl "-">
-<!ENTITY ow.prefs.username "-">
-<!ENTITY ow.prefs.password "-">
-<!ENTITY ow.prefs.testlogin "-">
-<!ENTITY ow.prefs.bgcolor "-">
-<!ENTITY ow.prefs.bgcolor.queue "-">
-<!ENTITY ow.prefs.bgcolor.watched "-">
-<!ENTITY ow.prefs.bgcolor.responsible "-">
-<!ENTITY ow.prefs.bgcolor.locked "-">
-<!ENTITY ow.prefs.example "-">
-<!ENTITY ow.prefs.checkintervall_in_minutes "-">
-<!ENTITY ow.prefs.ignore_queues "-">
-<!ENTITY ow.prefs.request_queues "-">
-<!ENTITY ow.prefs.max_entries_per_menu "-">
-<!ENTITY ow.tt.queue "-">
-<!ENTITY ow.tt.watched "-">
-<!ENTITY ow.tt.responsible "-">
-<!ENTITY ow.tt.locked "-">
-
--->

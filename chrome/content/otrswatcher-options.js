@@ -6,6 +6,9 @@ function OTRSWatcher(){
   this.timer = null;
   this.entriespermenu=10;
   this.smoothemptyresponse=true;
+  this.firstload = true;
+  
+  this.tickets = {};
   
   this.optprefix = "extensions.otrswatcher";
   this.MY_EXTENSION_UUID = "otrswatcher@kraemer.norman.at.googlemail.com";
@@ -293,7 +296,7 @@ function OTRSWatcher(){
     }; 
     let req = url+ "?Method="+method+"&User="+encodeURIComponent(username)+"&Password="+encodeURIComponent(password)+"&Object=iPhoneObject";
     if (otherpara != null) req=req+"&Data="+otherpara;
-    //dump(req+"\n")
+    dump(req+"\n")
     let otrswatcher=this;
     httpRequest.open("GET", req, true);
     httpRequest.onload = function (){ onload.apply(otrswatcher, [httpRequest.responseText]); };
@@ -633,6 +636,8 @@ function OTRSWatcher(){
     document.getElementById("loaderimg").hidden=true;
     document.getElementById("das-o").hidden=false;
     document.getElementById("loaderimg").removeAttribute("src");
+    this.firstload = false;
+    
     if (chainfunc != null) chainfunc.apply(this);
   };
 
@@ -666,6 +671,20 @@ function OTRSWatcher(){
 	url = url + "?Action=AgentTicketZoom&TicketID="+TicketID+"&ArticleID="+ArticleID+"&QueueID="+QueueID;
       }
       window.content.open(url, "otrswatcher-otrs");
+      
+      //if we opened an entry we have marked as changed, we are now removing those marks
+      if (TicketID != null && this.tickets[TicketID].ArticleID != this.tickets[TicketID].lastSeenArticleID){
+	for(let method in this.tickets[TicketID].menuitems){
+	  let menuitem=this.tickets[TicketID].menuitems[method];
+  	  let label=menuitem.getAttribute("label");
+	  label = label.substr(2);
+	  menuitem.setAttribute("label", label);
+	  if (method == "QueueView"){
+	    let menu=menuitem.parentNode;
+	    
+	  }
+	}
+      }
     }
 
   };
@@ -684,15 +703,37 @@ function OTRSWatcher(){
       
       if (responseText != ""){
 	let result=this.getJSONResult(responseText);
+	let markpopupchanged=false;
 	if (result.Result == "successful"){
 	  for each(let ticket in result.Data){
 
 	    let menuitem = document.createElement("menuitem");
 	    let label = ticket.Title || ticket.Subject;
+
+	    if (!(ticket.TicketID in this.tickets)){
+	      this.tickets[ticket.TicketID] = {ArticleID:"", lastSeenArticleID:"", menuitems:{}};
+	    }
+	    this.tickets[ticket.TicketID].ArticleID = ticket.ArticleID;
+	    if (this.firstload){
+	      this.tickets[ticket.TicketID].lastSeenArticleID = ticket.ArticleID;
+	    }
+	    this.tickets[ticket.TicketID].menuitems[method] = menuitem;
+	    
+	    
+	    // do we prepend a mark to signify a change in the tickets since we looked at it last?
+	    if (this.tickets[ticket.TicketID].lastSeenArticleID != ticket.ArticleID){
+	      label = "* " + label;
+	      markpopupchanged=true;
+	    }
 	    menuitem.setAttribute("label", label);
 	    menuitem.setAttribute("oncommand", "otrswatcher.openOTRS("+ticket.QueueID+", "+ticket.TicketID+", "+ticket.ArticleID+");");
 	    popup.appendChild(menuitem);
 	  }
+	}
+	if (markpopupchanged){
+	  let label=popup.parentNode.getAttribute("label");
+	  label = "* " + label;
+	  popup.parentNode.setAttribute("label", label);
 	}
       }
       if (chainfunc != null)
@@ -880,6 +921,19 @@ function OTRSWatcher(){
     this.prefs.removeObserver("", this);
   };
   
+  
+  /**
+   * Loads url via protocol service handler.
+   * 
+   * @param {String} url The URL to load
+   */
+  this.loadUrl = function(url){
+    
+    var uri = Components.classes["@mozilla.org/network/standard-url;1"].createInstance(Components.interfaces.nsIURI);
+    uri.spec = url;
+    var protocolSvc = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
+    protocolSvc.loadUrl(uri);
+  };
   
   /**
    * Overlay initialisation.
